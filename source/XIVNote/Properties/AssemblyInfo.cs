@@ -2,11 +2,11 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 
-[assembly: AssemblyTitle("XIVTags")]
-[assembly: AssemblyDescription("https://github.com/anoyetta/XIVTags")]
+[assembly: AssemblyTitle("XIVNote")]
+[assembly: AssemblyDescription("https://github.com/anoyetta/XIVNote")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("XIVTags")]
+[assembly: AssemblyProduct("XIVNote")]
 [assembly: AssemblyCopyright("Copyright © anoyetta 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -15,5 +15,4 @@ using System.Windows;
     ResourceDictionaryLocation.None,
     ResourceDictionaryLocation.SourceAssembly
 )]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.0.0.0")]
