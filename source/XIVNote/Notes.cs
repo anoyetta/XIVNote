@@ -30,6 +30,10 @@ namespace XIVNote
             Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
             $"{Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location)}.xml");
 
+        private static readonly XmlSerializer NotesSerializer = new XmlSerializer(
+            typeof(SuspendableObservableCollection<Note>),
+            new XmlRootAttribute("notes"));
+
         public void Load() => this.Load(FileName);
 
         public void Load(
@@ -49,8 +53,7 @@ namespace XIVNote
                         return;
                     }
 
-                    var xs = new XmlSerializer(this.NoteList.GetType());
-                    var data = xs.Deserialize(sr) as IEnumerable<Note>;
+                    var data = NotesSerializer.Deserialize(sr) as IEnumerable<Note>;
 
                     if (data != null)
                     {
@@ -79,8 +82,7 @@ namespace XIVNote
                 var sb = new StringBuilder();
                 using (var sw = new StringWriter(sb))
                 {
-                    var xs = new XmlSerializer(this.NoteList.GetType(), new XmlRootAttribute("notes"));
-                    xs.Serialize(sw, this.NoteList, ns);
+                    NotesSerializer.Serialize(sw, this.NoteList, ns);
                 }
 
                 sb.Replace("utf-16", "utf-8");
