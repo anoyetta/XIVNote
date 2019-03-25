@@ -44,6 +44,13 @@
   </metro:MetroWindow.LayoutTransform>
 
   <Grid>
+    <tb:TaskbarIcon
+      x:Name="NotifyIcon"
+      IconSource="XIVNote.ico"
+      Visibility="Collapsed"
+      LeftClickCommand="{Binding ShowCommand, Mode=OneWay}"
+      ToolTipText="{Binding Config.AppNameWithVersion, Mode=OneWay}" />
+
     <ScrollViewer
       Focusable="False"
       IsTabStop="False"
@@ -117,7 +124,8 @@
         HorizontalAlignment="Left"
         Height="30" Width="30"
         Style="{DynamicResource IconButtonStyle}"
-        Command="{Binding ShowConfigCommand, Mode=OneWay}">
+        Command="{Binding ShowConfigCommand, Mode=OneWay}"
+        ToolTip="Config">
         <iconPacks:PackIconFontAwesome Kind="CogSolid" Foreground="{DynamicResource WhiteBrush}" />
       </Button>
 
@@ -128,7 +136,8 @@
         Margin="5 0 0 0"
         Height="25" Width="25"
         Style="{DynamicResource IconButtonStyle}"
-        Command="{Binding ExitCommand, Mode=OneWay}">
+        Command="{Binding ExitCommand, Mode=OneWay}"
+        ToolTip="Exit">
         <iconPacks:PackIconFontAwesome Kind="SignOutAltSolid" Foreground="{DynamicResource WhiteBrush}" />
       </Button>
 
@@ -137,7 +146,8 @@
         HorizontalAlignment="Right"
         Height="30" Width="30"
         Style="{DynamicResource IconButtonStyle}"
-        Command="{Binding AddNoteCommand, Mode=OneWay}">
+        Command="{Binding AddNoteCommand, Mode=OneWay}"
+        ToolTip="Add Note">
         <iconPacks:PackIconMaterial Kind="Plus" Foreground="{DynamicResource WhiteBrush}" />
       </Button>
     </DockPanel>

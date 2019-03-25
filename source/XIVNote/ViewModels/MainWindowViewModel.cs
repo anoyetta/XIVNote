@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using aframe;
@@ -8,6 +9,8 @@ namespace XIVNote.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
+        public Action ShowCallback { get; set; }
+
         public MainWindowViewModel()
         {
             Notes.Instance.NoteList.CollectionChanged += (_, __) => this.RaisePropertyChanged(nameof(this.NoteList));
@@ -16,6 +19,17 @@ namespace XIVNote.ViewModels
         public Config Config => Config.Instance;
 
         public IEnumerable<Note> NoteList => Notes.Instance.NoteList.Where(x => !x.IsDefault);
+
+        #region Show
+
+        private DelegateCommand showCommand;
+
+        public DelegateCommand ShowCommand =>
+            this.showCommand ?? (this.showCommand = new DelegateCommand(this.ExecuteShowCommand));
+
+        private void ExecuteShowCommand() => this.ShowCallback?.Invoke();
+
+        #endregion Show
 
         #region ShowConfig
 
