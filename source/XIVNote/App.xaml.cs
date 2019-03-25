@@ -1,5 +1,9 @@
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using aframe;
 
 namespace XIVNote
 {
@@ -17,21 +21,48 @@ namespace XIVNote
             this.DispatcherUnhandledException += this.App_DispatcherUnhandledException;
         }
 
-        private void App_Startup(object sender, StartupEventArgs e)
+        private async void App_Startup(object sender, StartupEventArgs e)
         {
-            var notes = Notes.Instance;
+            var notes = await Task.Run(() => Notes.Instance);
+            await notes.ShowNotesAsync();
         }
 
         private void App_Exit(object sender, ExitEventArgs e)
         {
-            Notes.Instance.Save();
-            Config.Instance.Save();
+            // NO-OP
         }
 
-        private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        private async void App_DispatcherUnhandledException(
+            object sender,
+            DispatcherUnhandledExceptionEventArgs e)
         {
-            Notes.Instance.Save();
-            Config.Instance.Save();
+            await Task.Run(() =>
+            {
+                Notes.Instance.Save();
+                Config.Instance.Save();
+
+                File.WriteAllText(
+                    @".\XIVNote.error.log",
+                    e.Exception.ToString(),
+                    new UTF8Encoding(false));
+            });
+
+            if (this.MainWindow != null)
+            {
+                MessageBoxHelper.ShowDialogMessageWindow(
+                    "XIVNote - Fatal",
+                    "予期しない例外を検知しました。アプリケーションを終了します。",
+                    e.Exception);
+            }
+            else
+            {
+                MessageBox.Show(
+                    "予期しない例外を検知しました。アプリケーションを終了します。\n\n" +
+                    e.Exception,
+                    "XIVNote - Fatal",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
         }
     }
 }

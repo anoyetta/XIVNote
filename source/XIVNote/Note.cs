@@ -2,15 +2,16 @@ using System;
 using System.Windows.Media;
 using System.Xml.Serialization;
 using aframe;
+using Prism.Commands;
 using Prism.Mvvm;
 
 namespace XIVNote
 {
     [Serializable]
-    public class Note : BindableBase
+    public partial class Note : BindableBase
     {
         [XmlIgnore]
-        public Guid ID { get; } = Guid.NewGuid();
+        public Guid ID { get; private set; } = Guid.NewGuid();
 
         private double x;
 
@@ -75,7 +76,7 @@ namespace XIVNote
         }
 
         [XmlAttribute("Foreground")]
-        public string ForegroupColorString
+        public string ForegroundColorString
         {
             get => this.foregroundColor.ToString();
             set => this.ForegroundColor = (Color)ColorConverter.ConvertFromString(value);
@@ -109,7 +110,7 @@ namespace XIVNote
         }
 
         [XmlAttribute("Background")]
-        public string BackgroupColorString
+        public string BackgroundColorString
         {
             get => this.backgroundColor.ToString();
             set => this.BackgroundColor = (Color)ColorConverter.ConvertFromString(value);
@@ -157,6 +158,15 @@ namespace XIVNote
             set => this.SetProperty(ref this.isPositionLocked, value);
         }
 
+        private bool isDefault = false;
+
+        [XmlAttribute]
+        public bool IsDefault
+        {
+            get => this.isDefault;
+            set => this.SetProperty(ref this.isDefault, value);
+        }
+
         private FontInfo font = (FontInfo)FontInfo.DefaultFont.Clone();
 
         public FontInfo Font
@@ -172,5 +182,17 @@ namespace XIVNote
             get => this.text;
             set => this.SetProperty(ref this.text, value);
         }
+
+        #region Close
+
+        private DelegateCommand closeCommand;
+
+        [XmlIgnore]
+        public DelegateCommand CloseCommand =>
+            this.closeCommand ?? (this.closeCommand = new DelegateCommand(this.ExecuteCloseCommand));
+
+        private async void ExecuteCloseCommand() => await Notes.Instance.RemoveNoteAsync(this);
+
+        #endregion Close
     }
 }

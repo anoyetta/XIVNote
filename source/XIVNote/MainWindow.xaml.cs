@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using MahApps.Metro.Controls;
 
 namespace XIVNote
@@ -10,6 +11,15 @@ namespace XIVNote
         public MainWindow()
         {
             this.InitializeComponent();
+
+            this.Closed += async (_, __) =>
+            {
+                await Task.Run(() =>
+                {
+                    Notes.Instance.Save();
+                    Config.Instance.Save();
+                });
+            };
         }
     }
 }

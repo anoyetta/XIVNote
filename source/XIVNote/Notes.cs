@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Xml.Serialization;
 using aframe;
+using XIVNote.Views;
 
 namespace XIVNote
 {
@@ -26,6 +30,9 @@ namespace XIVNote
         [XmlElement("note")]
         public SuspendableObservableCollection<Note> NoteList { get; } = new SuspendableObservableCollection<Note>();
 
+        [XmlIgnore]
+        public Note DefaultNote => this.NoteList.FirstOrDefault(x => x.IsDefault);
+
         public static string FileName => Path.Combine(
             Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
             $"{Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location)}.xml");
@@ -39,25 +46,35 @@ namespace XIVNote
         public void Load(
             string fileName)
         {
-            if (!File.Exists(fileName))
-            {
-                return;
-            }
-
             lock (this)
             {
-                using (var sr = new StreamReader(fileName, new UTF8Encoding(false)))
+                try
                 {
-                    if (sr.BaseStream.Length <= 0)
+                    if (!File.Exists(fileName))
                     {
                         return;
                     }
 
-                    var data = NotesSerializer.Deserialize(sr) as IEnumerable<Note>;
-
-                    if (data != null)
+                    using (var sr = new StreamReader(fileName, new UTF8Encoding(false)))
                     {
-                        this.NoteList.AddRange(data, true);
+                        if (sr.BaseStream.Length <= 0)
+                        {
+                            return;
+                        }
+
+                        var data = NotesSerializer.Deserialize(sr) as IEnumerable<Note>;
+
+                        if (data != null)
+                        {
+                            this.NoteList.AddRange(data, true);
+                        }
+                    }
+                }
+                finally
+                {
+                    if (!this.NoteList.Any(x => x.IsDefault))
+                    {
+                        this.NoteList.Add(Note.DefaultNoteStyle);
                     }
                 }
             }
@@ -92,6 +109,85 @@ namespace XIVNote
                     sb.ToString() + Environment.NewLine,
                     new UTF8Encoding(false));
             }
+        }
+
+        private readonly List<NoteView> NoteViews = new List<NoteView>(64);
+
+        public async Task ShowNotesAsync() => await WPFHelper.Dispatcher.InvokeAsync(async () =>
+        {
+            this.NoteViews.Clear();
+
+            foreach (var model in this.NoteList)
+            {
+                if (model.IsDefault)
+                {
+                    continue;
+                }
+
+                var view = new NoteView();
+                view.ViewModel.Model = model;
+
+                view.Show();
+
+                this.NoteViews.Add(view);
+                await Task.Delay(10);
+            }
+        });
+
+        public async Task CloseNotesAsync() => await WPFHelper.Dispatcher.InvokeAsync(() =>
+        {
+            foreach (var view in this.NoteViews)
+            {
+                view.Close();
+                this.NoteViews.Remove(view);
+            }
+        });
+
+        public async Task AddNoteAsync(
+            Note note = null)
+        {
+            if (note == null)
+            {
+                note = Note.CreateNew();
+            }
+
+            note.IsDefault = false;
+            this.NoteList.Add(note);
+
+            await WPFHelper.Dispatcher.InvokeAsync(() =>
+            {
+                var view = new NoteView();
+                view.ViewModel.Model = note;
+
+                view.Width = Note.DefaultNoteSize;
+                view.Height = Note.DefaultNoteSize;
+                view.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+                view.Show();
+
+                this.NoteViews.Add(view);
+            });
+
+            await Task.Run(this.Save);
+        }
+
+        public async Task RemoveNoteAsync(
+            Note note)
+        {
+            var toRemove = this.NoteViews.FirstOrDefault(x => x.ID == note.ID);
+
+            await WPFHelper.Dispatcher.InvokeAsync(() =>
+            {
+                if (toRemove != null)
+                {
+                    toRemove.Close();
+                    this.NoteViews.Remove(toRemove);
+                }
+            });
+
+            this.NoteList.Remove(note);
+
+            await Task.Run(this.Save);
         }
     }
 }
