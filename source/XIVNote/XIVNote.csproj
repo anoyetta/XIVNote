@@ -158,10 +158,6 @@
       <Project>{1e602601-aea4-47cd-8f44-6c5e1d7387a5}</Project>
       <Name>aframe.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\aframe\source\aframe.Updater\aframe.Updater.csproj">
-      <Project>{38e4d044-78f5-453e-a52c-96f6b201c8b8}</Project>
-      <Name>aframe.Updater</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf">
