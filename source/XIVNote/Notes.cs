@@ -225,26 +225,31 @@ namespace XIVNote
             {
                 try
                 {
+                    var isFFXIVActiveBack = IsFFXIVActive;
+
                     if (Config.Instance.IsHideWhenNotExistsFFXIV)
                     {
-                        var isFFXIVActiveBack = IsFFXIVActive;
                         RefreshFFXIVIsActive();
+                    }
+                    else
+                    {
+                        IsFFXIVActive = true;
+                    }
 
-                        if (IsFFXIVActive != isFFXIVActiveBack)
+                    if (IsFFXIVActive != isFFXIVActiveBack)
+                    {
+                        WPFHelper.Dispatcher.Invoke(() =>
                         {
-                            WPFHelper.Dispatcher.Invoke(() =>
+                            foreach (var view in Notes.Instance.NoteViews)
                             {
-                                foreach (var view in Notes.Instance.NoteViews)
-                                {
-                                    view.Visibility = IsFFXIVActive ?
-                                        Visibility.Visible :
-                                        Visibility.Hidden;
+                                view.Visibility = IsFFXIVActive ?
+                                    Visibility.Visible :
+                                    Visibility.Hidden;
 
-                                    Thread.Sleep(1);
-                                }
-                            },
-                            DispatcherPriority.ContextIdle);
-                        }
+                                Thread.Sleep(1);
+                            }
+                        },
+                        DispatcherPriority.ContextIdle);
                     }
                 }
                 catch (ThreadAbortException)

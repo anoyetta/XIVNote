@@ -23,6 +23,9 @@ namespace XIVNote
 
         private async void App_Startup(object sender, StartupEventArgs e)
         {
+            var c = Config.Instance;
+            c.SetStartup(c.IsStartupWithWindows);
+
             var notes = await Task.Run(() => Notes.Instance);
             await notes.ShowNotesAsync();
 

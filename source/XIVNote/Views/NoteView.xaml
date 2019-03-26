@@ -35,13 +35,13 @@
   d:DataContext="{d:DesignInstance {x:Type vm:NoteViewModel}, IsDesignTimeCreatable=True}"
   prism:ViewModelLocator.AutoWireViewModel="True">
 
-  <Window.LayoutTransform>
-    <ScaleTransform
-      ScaleX="{Binding Config.Scale, Mode=OneWay}"
-      ScaleY="{Binding Config.Scale, Mode=OneWay}" />
-  </Window.LayoutTransform>
-
   <Grid>
+    <Grid.LayoutTransform>
+      <ScaleTransform
+        ScaleX="{Binding Config.Scale, Mode=OneWay}"
+        ScaleY="{Binding Config.Scale, Mode=OneWay}" />
+    </Grid.LayoutTransform>
+
     <!-- Background Border -->
     <Border
       Panel.ZIndex="-1"

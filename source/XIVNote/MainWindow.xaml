@@ -106,7 +106,8 @@
                   HorizontalAlignment="Right"
                   Height="28" Width="28"
                   Style="{DynamicResource IconButtonStyle}"
-                  Command="{Binding CloseCommand, Mode=OneWay}">
+                  Command="{Binding CloseCommand, Mode=OneWay}"
+                  ToolTip="Remove">
                   <iconPacks:PackIconFontAwesome Kind="TrashSolid" Foreground="{DynamicResource WhiteBrush}" Height="16" Width="16" />
                 </Button>
               </DockPanel>
