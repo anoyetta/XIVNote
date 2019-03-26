@@ -32,7 +32,7 @@
   Width="380"
   Height="680"
   MinWidth="380"
-  MinHeight="200"
+  MinHeight="520"
   ShowMinButton="False"
   ShowMaxRestoreButton="False"
   d:DataContext="{d:DesignInstance {x:Type vm:ConfigViewModel}, IsDesignTimeCreatable=True}"
