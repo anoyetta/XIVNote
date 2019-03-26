@@ -59,9 +59,10 @@
               HorizontalAlignment="Left"
               StringFormat="N2"
               Interval="0.01"
-              Width="90"
+              Width="95"
               Maximum="1"
               Minimum="0"
+              FontSize="16"
               Value="{Binding Model.Opacity, Mode=TwoWay}" />
           </StackPanel>
         </StackPanel>

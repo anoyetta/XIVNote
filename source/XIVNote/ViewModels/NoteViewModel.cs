@@ -37,7 +37,7 @@ namespace XIVNote.ViewModels
         public DelegateCommand AddNoteCommand =>
             this.addNoteCommand ?? (this.addNoteCommand = new DelegateCommand(this.ExecuteAddNoteCommand));
 
-        private async void ExecuteAddNoteCommand() => await Notes.Instance.AddNoteAsync();
+        private async void ExecuteAddNoteCommand() => await Notes.Instance.AddNoteAsync(this.Model);
 
         #endregion AddNote
 

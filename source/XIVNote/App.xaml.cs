@@ -25,6 +25,9 @@ namespace XIVNote
         {
             var notes = await Task.Run(() => Notes.Instance);
             await notes.ShowNotesAsync();
+
+            await Task.Delay(10);
+            notes.StartForegroundAppSubscriber();
         }
 
         private void App_Exit(object sender, ExitEventArgs e)

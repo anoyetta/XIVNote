@@ -175,6 +175,15 @@ namespace XIVNote
             set => this.SetProperty(ref this.isMinimizeStartup, value);
         }
 
+        private bool isHideWhenNotExistsFFXIV = true;
+
+        [JsonProperty(PropertyName = "is_hide_when_not_exists_ffxiv")]
+        public bool IsHideWhenNotExistsFFXIV
+        {
+            get => this.isHideWhenNotExistsFFXIV;
+            set => this.SetProperty(ref this.isHideWhenNotExistsFFXIV, value);
+        }
+
         #endregion Data
     }
 }

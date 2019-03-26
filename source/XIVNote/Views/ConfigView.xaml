@@ -1,0 +1,180 @@
+﻿<metro:MetroWindow
+  x:Class="XIVNote.Views.ConfigView"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:local="clr-namespace:XIVNote.Views"
+  xmlns:system="clr-namespace:System;assembly=mscorlib"
+  xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+  xmlns:converters="http://metro.mahapps.com/winfx/xaml/shared"
+  xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+  xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+  xmlns:materialDesignConverters="clr-namespace:MaterialDesignThemes.Wpf.Converters;assembly=MaterialDesignThemes.Wpf"
+  xmlns:prism="http://prismlibrary.com/"
+  xmlns:fw="clr-namespace:aframe;assembly=aframe.Core"
+  xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+  xmlns:vm="clr-namespace:XIVNote.ViewModels"
+  mc:Ignorable="d"
+  GlowBrush="{DynamicResource AccentColorBrush}"
+  RenderOptions.BitmapScalingMode="Fant"
+  RenderOptions.ClearTypeHint="Enabled"
+  RenderOptions.EdgeMode="Unspecified"
+  TextOptions.TextFormattingMode="Ideal"
+  TextOptions.TextHintingMode="Auto"
+  TextOptions.TextRenderingMode="ClearType"
+  TextElement.FontSize="16"
+  WindowStyle="ToolWindow"
+  ShowInTaskbar="True"
+  ResizeMode="CanResize"
+  Title="XIVNote - Settings"
+  TitleCharacterCasing="Normal"
+  Width="380"
+  Height="680"
+  MinWidth="380"
+  MinHeight="200"
+  ShowMinButton="False"
+  ShowMaxRestoreButton="False"
+  d:DataContext="{d:DesignInstance {x:Type vm:ConfigViewModel}, IsDesignTimeCreatable=True}"
+  prism:ViewModelLocator.AutoWireViewModel="True">
+
+  <metro:MetroWindow.LayoutTransform>
+    <ScaleTransform
+      ScaleX="{Binding Config.Scale, Mode=OneWay}"
+      ScaleY="{Binding Config.Scale, Mode=OneWay}" />
+  </metro:MetroWindow.LayoutTransform>
+
+  <metro:MetroWindow.Resources>
+    <system:Double x:Key="HeaderFontSize">16</system:Double>
+  </metro:MetroWindow.Resources>
+
+  <ScrollViewer
+    IsTabStop="False"
+    Focusable="False"
+    HorizontalScrollBarVisibility="Disabled"
+    VerticalScrollBarVisibility="Auto"
+    Margin="10">
+
+    <StackPanel>
+      <metro:MetroHeader Header="Scale" metro:ControlsHelper.HeaderFontSize="{DynamicResource HeaderFontSize}">
+        <Grid Margin="0 5 0 0">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+
+          <Slider
+            Grid.Column="0"
+            Value="{Binding Config.Scale, Mode=TwoWay}"
+            Minimum="0.00"
+            Maximum="4.00"
+            LargeChange="0.01"
+            SmallChange="0.01"
+            TickFrequency="0.5"
+            TickPlacement="Both"
+            metro:SliderHelper.ChangeValueBy="LargeChange"
+            metro:SliderHelper.EnableMouseWheel="MouseHover"
+            Style="{DynamicResource MahApps.Metro.Styles.Slider.Win10}" />
+
+          <TextBlock
+            Grid.Column="1"
+            TextAlignment="Right"
+            VerticalAlignment="Center"
+            Text="{Binding Config.Scale, Mode=OneWay, StringFormat=N2}"
+            Width="50" />
+        </Grid>
+      </metro:MetroHeader>
+
+      <metro:ToggleSwitch
+        Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
+        Margin="0 25 0 0"
+        HorizontalAlignment="Left"
+        IsChecked="{Binding Config.IsStartupWithWindows, Mode=TwoWay}"
+        Content="Startup with Windows" />
+
+      <metro:ToggleSwitch
+        Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
+        Margin="0 10 0 0"
+        HorizontalAlignment="Left"
+        IsChecked="{Binding Config.IsMinimizeStartup, Mode=TwoWay}"
+        Content="Minimize Startup" />
+
+      <metro:ToggleSwitch
+        Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
+        Margin="0 10 0 0"
+        HorizontalAlignment="Left"
+        IsChecked="{Binding Config.IsHideWhenNotExistsFFXIV, Mode=TwoWay}"
+        Content="Hide when not exists FFXIV" />
+
+      <metro:MetroHeader Header="Note Default Styles" metro:ControlsHelper.HeaderFontSize="{DynamicResource HeaderFontSize}" Margin="0 25 0 0">
+        <StackPanel Margin="0 5 0 0">
+          <metro:MetroHeader Header="Background" metro:ControlsHelper.HeaderFontSize="16">
+            <StackPanel Orientation="Horizontal">
+              <Button
+                Focusable="False"
+                HorizontalAlignment="Left"
+                Width="110"
+                Height="30"
+                Background="{Binding DefaultNote.BackgroundBrush, Mode=OneWay}"
+                Command="{Binding ChangeBackgroundCommand, Mode=OneWay}" />
+
+              <StackPanel Orientation="Horizontal" Margin="15 0 0 0">
+                <Label Content="Opacity" Margin="0 0 5 0" FontSize="16" />
+                <metro:NumericUpDown
+                  HorizontalAlignment="Left"
+                  StringFormat="N2"
+                  Interval="0.01"
+                  Width="95"
+                  Maximum="1"
+                  Minimum="0"
+                  FontSize="16"
+                  Value="{Binding DefaultNote.Opacity, Mode=TwoWay}" />
+              </StackPanel>
+            </StackPanel>
+          </metro:MetroHeader>
+
+          <metro:MetroHeader Header="Foreground" metro:ControlsHelper.HeaderFontSize="16" Margin="0 10 0 0">
+            <StackPanel Orientation="Horizontal">
+              <Button
+                Focusable="False"
+                HorizontalAlignment="Left"
+                Width="110"
+                Height="30"
+                Background="{Binding DefaultNote.ForegroundBrush, Mode=OneWay}"
+                Command="{Binding ChangeForegroundCommand, Mode=OneWay}" />
+            </StackPanel>
+          </metro:MetroHeader>
+
+          <metro:MetroHeader Header="Font" metro:ControlsHelper.HeaderFontSize="16" Margin="0 10 0 0">
+            <StackPanel Orientation="Horizontal">
+              <Button
+                metro:ButtonHelper.PreserveTextCase="True"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left"
+                Command="{Binding ChangeFontCommand, Mode=OneWay}"
+                Content="{Binding DefaultNote.Font.DisplayText, Mode=OneWay}"
+                FontFamily="{Binding DefaultNote.Font.FontFamily, Mode=OneWay}"
+                FontStyle="{Binding DefaultNote.Font.Style, Mode=OneWay}"
+                FontWeight="{Binding DefaultNote.Font.Weight, Mode=OneWay}"
+                FontStretch="{Binding DefaultNote.Font.Stretch, Mode=OneWay}"
+                MaxWidth="300"
+                FontSize="16">
+                <Button.Style>
+                  <Style TargetType="Button">
+                    <Setter Property="Template">
+                      <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                          <TextBlock Text="{TemplateBinding Content}" TextWrapping="Wrap" Padding="5 2" TextDecorations="Underline" />
+                        </ControlTemplate>
+                      </Setter.Value>
+                    </Setter>
+                  </Style>
+                </Button.Style>
+              </Button>
+            </StackPanel>
+          </metro:MetroHeader>
+        </StackPanel>
+      </metro:MetroHeader>
+    </StackPanel>
+  </ScrollViewer>
+</metro:MetroWindow>

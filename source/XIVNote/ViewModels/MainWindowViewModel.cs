@@ -4,6 +4,7 @@ using System.Linq;
 using aframe;
 using Prism.Commands;
 using Prism.Mvvm;
+using XIVNote.Views;
 
 namespace XIVNote.ViewModels
 {
@@ -40,6 +41,14 @@ namespace XIVNote.ViewModels
 
         private void ExecuteShowConfigCommand()
         {
+            var mainView = WPFHelper.MainWindow;
+
+            var configView = new ConfigView();
+            configView.Height = mainView.Height;
+            configView.Left = mainView.Left + mainView.Width + 3;
+            configView.Top = mainView.Top;
+
+            configView.Show();
         }
 
         #endregion ShowConfig

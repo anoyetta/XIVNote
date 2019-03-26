@@ -16,6 +16,7 @@ namespace XIVNote
             { nameof(H), DefaultHeight },
             { nameof(IsStartupWithWindows), false },
             { nameof(IsMinimizeStartup), false },
+            { nameof(IsHideWhenNotExistsFFXIV), true },
         };
     }
 }

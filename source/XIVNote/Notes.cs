@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 using System.Xml.Serialization;
 using aframe;
 using XIVNote.Views;
@@ -144,12 +148,9 @@ namespace XIVNote
         });
 
         public async Task AddNoteAsync(
-            Note note = null)
+            Note parentNote = null)
         {
-            if (note == null)
-            {
-                note = Note.CreateNew();
-            }
+            var note = Note.CreateNew();
 
             note.IsDefault = false;
             this.NoteList.Add(note);
@@ -161,7 +162,17 @@ namespace XIVNote
 
                 view.Width = Note.DefaultNoteSize;
                 view.Height = Note.DefaultNoteSize;
-                view.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+                if (parentNote == null)
+                {
+                    view.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                }
+                else
+                {
+                    view.WindowStartupLocation = WindowStartupLocation.Manual;
+                    view.Left = parentNote.X + parentNote.W + 3;
+                    view.Top = parentNote.Y;
+                }
 
                 view.Show();
 
@@ -188,6 +199,106 @@ namespace XIVNote
             this.NoteList.Remove(note);
 
             await Task.Run(this.Save);
+        }
+
+        public void StartForegroundAppSubscriber()
+        {
+            if (!ForegroundAppSubscriber.IsAlive)
+            {
+                ForegroundAppSubscriber.Start();
+            }
+        }
+
+        private static readonly TimeSpan ForgroundAppSubscribeInterval = TimeSpan.FromSeconds(3);
+
+        private readonly Thread ForegroundAppSubscriber = new Thread(SubscribeForegroundApp)
+        {
+            IsBackground = true,
+            Priority = ThreadPriority.Lowest,
+        };
+
+        private static void SubscribeForegroundApp()
+        {
+            Thread.Sleep(ForgroundAppSubscribeInterval.Add(ForgroundAppSubscribeInterval));
+
+            while (true)
+            {
+                try
+                {
+                    if (Config.Instance.IsHideWhenNotExistsFFXIV)
+                    {
+                        var isFFXIVActiveBack = IsFFXIVActive;
+                        RefreshFFXIVIsActive();
+
+                        if (IsFFXIVActive != isFFXIVActiveBack)
+                        {
+                            WPFHelper.Dispatcher.Invoke(() =>
+                            {
+                                foreach (var view in Notes.Instance.NoteViews)
+                                {
+                                    view.Visibility = IsFFXIVActive ?
+                                        Visibility.Visible :
+                                        Visibility.Hidden;
+
+                                    Thread.Sleep(1);
+                                }
+                            },
+                            DispatcherPriority.ContextIdle);
+                        }
+                    }
+                }
+                catch (ThreadAbortException)
+                {
+                    return;
+                }
+                catch (Exception)
+                {
+                    Thread.Sleep(ForgroundAppSubscribeInterval.Add(ForgroundAppSubscribeInterval));
+                }
+                finally
+                {
+                    Thread.Sleep(ForgroundAppSubscribeInterval);
+                }
+            }
+        }
+
+        private static volatile bool IsFFXIVActive;
+
+        private static void RefreshFFXIVIsActive()
+        {
+            try
+            {
+                // フォアグラウンドWindowのハンドルを取得する
+                var hWnd = NativeMethods.GetForegroundWindow();
+
+                // プロセスIDに変換する
+                NativeMethods.GetWindowThreadProcessId(hWnd, out uint pid);
+
+                // フォアウィンドウのファイル名を取得する
+                var p = Process.GetProcessById((int)pid);
+                if (p != null)
+                {
+                    var fileName = Path.GetFileName(
+                        p.MainModule.FileName);
+
+                    var currentProcessFileName = Path.GetFileName(
+                        Process.GetCurrentProcess().MainModule.FileName);
+
+                    if (fileName.ToLower() == "ffxiv.exe" ||
+                        fileName.ToLower() == "ffxiv_dx11.exe" ||
+                        fileName.ToLower() == currentProcessFileName.ToLower())
+                    {
+                        IsFFXIVActive = true;
+                    }
+                    else
+                    {
+                        IsFFXIVActive = false;
+                    }
+                }
+            }
+            catch (Win32Exception)
+            {
+            }
         }
     }
 }
