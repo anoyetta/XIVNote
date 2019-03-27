@@ -118,7 +118,7 @@
         VerticalScrollBarVisibility="Auto"
         TextOptions.TextFormattingMode="Ideal"
         TextOptions.TextRenderingMode="ClearType"
-        TextOptions.TextHintingMode="Auto"
+        TextOptions.TextHintingMode="Animated"
         TextChanged="NoteTextBox_TextChanged"
         FontFamily="{Binding Model.Font.FontFamily, Mode=OneWay}"
         FontSize="{Binding Model.Font.Size, Mode=OneWay}"
