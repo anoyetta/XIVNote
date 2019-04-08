@@ -164,6 +164,7 @@
       <DependentUpon>UpdateCheckerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="WaColors.cs" />
+    <Compile Include="WrappingStream.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
