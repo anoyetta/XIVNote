@@ -43,6 +43,11 @@
         ScaleY="{Binding Config.Scale, Mode=OneWay}" />
     </Grid.LayoutTransform>
 
+    <Thumb Name="LeftThumb" Panel.ZIndex="100" HorizontalAlignment="Left" Width="2" BorderThickness="1.5" BorderBrush="Transparent" Cursor="SizeWE" Opacity="0.5" />
+    <Thumb Name="RightThumb" Panel.ZIndex="100" HorizontalAlignment="Right" Width="2" BorderThickness="1.5" BorderBrush="Transparent" Cursor="SizeWE" Opacity="0.5" />
+    <Thumb Name="TopThumb" Panel.ZIndex="100" VerticalAlignment="Top" Height="2" BorderThickness="1.5" BorderBrush="Transparent" Cursor="SizeNS" Opacity="0.5" />
+    <Thumb Name="BottomThumb" Panel.ZIndex="100" VerticalAlignment="Bottom" Height="2" BorderThickness="1.5" BorderBrush="Transparent" Cursor="SizeNS" Opacity="0.5" />
+
     <!-- Background Border -->
     <Border
       Panel.ZIndex="-1"

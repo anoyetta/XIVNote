@@ -41,6 +41,28 @@ namespace XIVNote.Views
             {
                 this.ViewModel.Model.PropertyChanged -= this.Model_PropertyChanged;
             };
+
+            this.LeftThumb.DragDelta += (_, e) =>
+            {
+                this.Left += e.HorizontalChange;
+                this.Width -= e.HorizontalChange;
+            };
+
+            this.RightThumb.DragDelta += (_, e) =>
+            {
+                this.Width += e.HorizontalChange;
+            };
+
+            this.TopThumb.DragDelta += (_, e) =>
+            {
+                this.Top += e.VerticalChange;
+                this.Height -= e.VerticalChange;
+            };
+
+            this.BottomThumb.DragDelta += (_, e) =>
+            {
+                this.Height += e.VerticalChange;
+            };
         }
 
         public NoteViewModel ViewModel => this.DataContext as NoteViewModel;
