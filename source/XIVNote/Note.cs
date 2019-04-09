@@ -241,6 +241,7 @@ namespace XIVNote
                     RestoreDirectory = true,
                     Filter = "Image Files (*.bmp; *.jpeg; *.jpg; *.gif; *.png)|*.bmp;*.jpeg;*.jpg;`*.gif;*.png|All Files (*.*)|*.*",
                     FilterIndex = 1,
+                    Multiselect = true,
                 };
             });
 
@@ -264,28 +265,29 @@ namespace XIVNote
                 return;
             }
 
-            var fileName = LazyOpenFileDialog.Value.FileName;
-
-            Config.Instance.ImageFileDirectory = Path.GetFileName(fileName);
-
-            var storeFileName = $"{Guid.NewGuid()}.png";
-            var storeFilePath = Path.Combine(@".\images", storeFileName);
-
-            // PNGŒ`Ž®‚É•ÏŠ·‚µ‚Ä•Û‘¶‚·‚é
-            await Task.Run(() =>
+            foreach (var fileName in LazyOpenFileDialog.Value.FileNames)
             {
-                using (var ms = new WrappingStream(new MemoryStream(File.ReadAllBytes(fileName))))
+                Config.Instance.ImageFileDirectory = Path.GetFileName(fileName);
+
+                var storeFileName = $"{Guid.NewGuid()}.png";
+                var storeFilePath = Path.Combine(@".\images", storeFileName);
+
+                // PNGŒ`Ž®‚É•ÏŠ·‚µ‚Ä•Û‘¶‚·‚é
+                await Task.Run(() =>
                 {
-                    var img = System.Drawing.Image.FromStream(ms);
-                    img.Save(storeFilePath, System.Drawing.Imaging.ImageFormat.Png);
-                }
-            });
+                    using (var ms = new WrappingStream(new MemoryStream(File.ReadAllBytes(fileName))))
+                    {
+                        var img = System.Drawing.Image.FromStream(ms);
+                        img.Save(storeFilePath, System.Drawing.Imaging.ImageFormat.Png);
+                    }
+                });
 
-            this.Images.Add(new NoteImage()
-            {
-                Parent = this,
-                FileName = storeFileName
-            });
+                this.Images.Add(new NoteImage()
+                {
+                    Parent = this,
+                    FileName = storeFileName
+                });
+            }
 
             await Task.Run(() => Notes.Instance.Save());
         }

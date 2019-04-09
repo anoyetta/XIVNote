@@ -1,4 +1,11 @@
-# XIVTags
+# XIVNote
+[![Downloads](https://img.shields.io/github/downloads/anoyetta/XIVNote/total.svg)](https://github.com/anoyetta/XIVNote/releases)
+[![License](https://img.shields.io/github/license/anoyetta/XIVNote.svg)](https://github.com/anoyetta/XIVNote)  
+　  
+![XIVNote Overview](https://github.com/anoyetta/XIVNote/blob/master/images/XIVNote_overview.png?raw=true)
+   
+「14ノート」とでも呼んでください。  
+　  
 FFXIV向けの付箋ツールです。  
 FFXIVにウィンドウに対して常に前面にいるように設定されたいわゆる付箋ツールです。  
 FFXIVのメモリ、ログ、パケットを読み取ることは一切ありません。  
