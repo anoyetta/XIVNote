@@ -1,7 +1,12 @@
 using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 using aframe;
+using Microsoft.Win32;
 using Prism.Commands;
 using Prism.Mvvm;
 
@@ -183,6 +188,132 @@ namespace XIVNote
             set => this.SetProperty(ref this.text, value);
         }
 
+        private readonly SuspendableObservableCollection<NoteImage> ImageList = new SuspendableObservableCollection<NoteImage>();
+
+        [XmlIgnore]
+        public SuspendableObservableCollection<NoteImage> Images
+        {
+            get => this.ImageList;
+            set
+            {
+                this.ImageList.Clear();
+
+                if (value != null)
+                {
+                    foreach (var item in value)
+                    {
+                        item.Parent = this;
+                        this.ImageList.Add(item);
+                    }
+                }
+            }
+        }
+
+        [XmlElement(ElementName = "Image")]
+        public NoteImage[] ImagesXML
+        {
+            get => this.ImageList.ToArray();
+            set
+            {
+                this.ImageList.Clear();
+
+                if (value != null)
+                {
+                    foreach (var item in value)
+                    {
+                        item.Parent = this;
+                        this.ImageList.Add(item);
+                    }
+                }
+            }
+        }
+
+        #region AddImage
+
+        private static readonly Lazy<OpenFileDialog> LazyOpenFileDialog = new Lazy<OpenFileDialog>(() =>
+        {
+            var dialog = default(OpenFileDialog);
+
+            WPFHelper.Dispatcher.Invoke(() =>
+            {
+                dialog = new OpenFileDialog()
+                {
+                    RestoreDirectory = true,
+                    Filter = "Image Files (*.bmp; *.jpeg; *.jpg; *.gif; *.png)|*.bmp;*.jpeg;*.jpg;`*.gif;*.png|All Files (*.*)|*.*",
+                    FilterIndex = 1,
+                };
+            });
+
+            return dialog;
+        });
+
+        private DelegateCommand addImageCommand;
+
+        public DelegateCommand AddImageCommand =>
+            this.addImageCommand ?? (this.addImageCommand = new DelegateCommand(this.ExecuteAddImageCommand));
+
+        private async void ExecuteAddImageCommand()
+        {
+            LazyOpenFileDialog.Value.InitialDirectory = Config.Instance.ImageFileDirectory;
+            LazyOpenFileDialog.Value.FileName = string.Empty;
+
+            var result = await WPFHelper.Dispatcher.InvokeAsync(() =>
+                LazyOpenFileDialog.Value.ShowDialog(WPFHelper.MainWindow) ?? false);
+            if (!result)
+            {
+                return;
+            }
+
+            var fileName = LazyOpenFileDialog.Value.FileName;
+
+            Config.Instance.ImageFileDirectory = Path.GetFileName(fileName);
+
+            var storeFileName = $"{Guid.NewGuid()}.png";
+            var storeFilePath = Path.Combine(@".\images", storeFileName);
+
+            // PNGŒ`Ž®‚É•ÏŠ·‚µ‚Ä•Û‘¶‚·‚é
+            await Task.Run(() =>
+            {
+                using (var ms = new WrappingStream(new MemoryStream(File.ReadAllBytes(fileName))))
+                {
+                    var img = System.Drawing.Image.FromStream(ms);
+                    img.Save(storeFilePath, System.Drawing.Imaging.ImageFormat.Png);
+                }
+            });
+
+            this.Images.Add(new NoteImage()
+            {
+                Parent = this,
+                FileName = storeFileName
+            });
+
+            await Task.Run(() => Notes.Instance.Save());
+        }
+
+        #endregion AddImage
+
+        #region RemoveImage
+
+        private DelegateCommand<NoteImage> removeImageCommand;
+
+        public DelegateCommand<NoteImage> RemoveImageCommand =>
+            this.removeImageCommand ?? (this.removeImageCommand = new DelegateCommand<NoteImage>(this.ExecuteRemoveImageCommand));
+
+        private async void ExecuteRemoveImageCommand(
+            NoteImage image)
+        {
+            if (image == null)
+            {
+                return;
+            }
+
+            this.Images.Remove(image);
+
+            await Task.Run(() => Notes.Instance.Save());
+        }
+
+        #endregion RemoveImage
+
         #region Close
 
         private DelegateCommand closeCommand;
@@ -194,5 +325,55 @@ namespace XIVNote
         private async void ExecuteCloseCommand() => await Notes.Instance.RemoveNoteAsync(this);
 
         #endregion Close
+    }
+
+    [Serializable]
+    public class NoteImage : BindableBase
+    {
+        [XmlIgnore]
+        public Note Parent { get; set; }
+
+        private string fileName;
+
+        [XmlAttribute(AttributeName = "File")]
+        public string FileName
+        {
+            get => this.fileName;
+            set => this.SetProperty(ref this.fileName, value);
+        }
+
+        private ImageSource imageSource;
+
+        [XmlIgnore]
+        public ImageSource ImageSource => this.imageSource ?? (this.imageSource = this.CreateImageSource());
+
+        [XmlIgnore]
+        public DelegateCommand<NoteImage> RemoveImageCommand => this.Parent?.RemoveImageCommand;
+
+        private ImageSource CreateImageSource()
+        {
+            if (string.IsNullOrEmpty(this.FileName))
+            {
+                return null;
+            }
+
+            var img = default(ImageSource);
+
+            var path = Path.Combine(
+                @".\images",
+                this.FileName);
+
+            if (File.Exists(path))
+            {
+                using (var ms = new WrappingStream(new MemoryStream(File.ReadAllBytes(path))))
+                {
+                    img = new WriteableBitmap(BitmapFrame.Create(ms));
+                }
+
+                img.Freeze();
+            }
+
+            return img;
+        }
     }
 }

@@ -15,6 +15,7 @@
   xmlns:fw="clr-namespace:aframe;assembly=aframe.Core"
   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
   xmlns:vm="clr-namespace:XIVNote.ViewModels"
+  xmlns:root="clr-namespace:XIVNote"
   mc:Ignorable="d"
   RenderOptions.BitmapScalingMode="Fant"
   RenderOptions.ClearTypeHint="Enabled"
@@ -52,6 +53,7 @@
     <Grid>
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
         <RowDefinition />
       </Grid.RowDefinitions>
 
@@ -72,6 +74,15 @@
             Command="{Binding AddNoteCommand, Mode=OneWay}"
             ToolTip="Add Note">
             <iconPacks:PackIconMaterial Kind="Plus" />
+          </Button>
+
+          <Button
+            DockPanel.Dock="Left" HorizontalAlignment="Left"
+            Height="30" Width="30"
+            Style="{DynamicResource AlterIconButtonStyle}"
+            Command="{Binding Model.AddImageCommand, Mode=OneWay}"
+            ToolTip="Add Image">
+            <iconPacks:PackIconMaterial Kind="Image" />
           </Button>
 
           <Button
@@ -103,10 +114,64 @@
         </DockPanel>
       </Grid>
 
+      <!-- Images -->
+      <ItemsControl
+        Grid.Row="1"
+        BorderThickness="0"
+        Focusable="False"
+        IsTabStop="False"
+        VirtualizingPanel.IsVirtualizing="True"
+        VirtualizingPanel.VirtualizationMode="Recycling"
+        ItemsSource="{Binding Model.Images, Mode=OneWay}">
+
+        <ItemsControl.ItemContainerStyle>
+          <Style TargetType="ContentPresenter">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Margin" Value="0" />
+          </Style>
+        </ItemsControl.ItemContainerStyle>
+
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <VirtualizingStackPanel Orientation="Vertical" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+
+        <ItemsControl.ItemTemplate>
+          <DataTemplate DataType="{x:Type root:NoteImage}">
+            <Grid Margin="0 0 0 1">
+              <Viewbox
+                StretchDirection="Both"
+                Stretch="Uniform"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Top">
+                <Image x:Name="Image" Source="{Binding ImageSource, Mode=OneWay}" />
+              </Viewbox>
+
+              <Button
+                VerticalAlignment="Top"
+                HorizontalAlignment="Right"
+                Height="15" Width="15"
+                Margin="2"
+                Style="{DynamicResource IconButtonStyle}"
+                Background="{DynamicResource GrayBrush2}"
+                Command="{Binding RemoveImageCommand, Mode=OneWay}"
+                CommandParameter="{Binding}"
+                ToolTip="Remove Image"
+                Opacity="0.5">
+                <Viewbox Margin="3">
+                  <iconPacks:PackIconMaterial Kind="Close" Foreground="{DynamicResource WhiteBrush}" />
+                </Viewbox>
+              </Button>
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
       <!-- Text -->
       <TextBox
         x:Name="NoteTextBox"
-        Grid.Row="1"
+        Grid.Row="2"
         Margin="2"
         VerticalAlignment="Stretch"
         HorizontalAlignment="Stretch"

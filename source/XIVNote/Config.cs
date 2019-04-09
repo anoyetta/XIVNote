@@ -184,6 +184,15 @@ namespace XIVNote
             set => this.SetProperty(ref this.isHideWhenNotExistsFFXIV, value);
         }
 
+        private string imageFileDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+
+        [JsonProperty(PropertyName = "image_file_directory")]
+        public string ImageFileDirectory
+        {
+            get => this.imageFileDirectory;
+            set => this.SetProperty(ref this.imageFileDirectory, value);
+        }
+
         #endregion Data
     }
 }

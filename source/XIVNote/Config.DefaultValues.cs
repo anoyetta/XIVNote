@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace XIVNote
@@ -17,6 +18,7 @@ namespace XIVNote
             { nameof(IsStartupWithWindows), false },
             { nameof(IsMinimizeStartup), false },
             { nameof(IsHideWhenNotExistsFFXIV), true },
+            { nameof(ImageFileDirectory), Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) },
         };
     }
 }
