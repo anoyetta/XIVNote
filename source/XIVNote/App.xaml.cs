@@ -2,6 +2,8 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Threading;
 using aframe;
 
@@ -15,6 +17,8 @@ namespace XIVNote
         public App()
         {
             this.ShutdownMode = ShutdownMode.OnMainWindowClose;
+
+            RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 
             this.Startup += this.App_Startup;
             this.Exit += this.App_Exit;
