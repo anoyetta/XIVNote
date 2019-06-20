@@ -129,6 +129,11 @@ namespace XIVNote
                     continue;
                 }
 
+                if (model.IsWidget)
+                {
+                    model.ForegroundColor = Note.WidgetForegroundColor;
+                }
+
                 var view = !model.IsWidget ?
                     new NoteView() as INoteOverlay :
                     new WidgetView() as INoteOverlay;
@@ -161,6 +166,7 @@ namespace XIVNote
             if (isWidget)
             {
                 note.Text = "https://www.anoyetta.com";
+                note.ForegroundColor = Note.WidgetForegroundColor;
             }
 
             this.NoteList.Add(note);
