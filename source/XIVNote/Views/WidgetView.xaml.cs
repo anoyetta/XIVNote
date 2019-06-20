@@ -135,6 +135,11 @@ namespace XIVNote.Views
             settings.CachePath = Path.Combine(
                 Path.GetTempPath(),
                 "XIVNote");
+            settings.LogFile = Path.Combine(
+                Path.GetTempPath(),
+                "XIVNote",
+                "browser.log");
+            settings.LogSeverity = LogSeverity.Warning;
             settings.DisableGpuAcceleration();
 
             Cef.Initialize(settings);
