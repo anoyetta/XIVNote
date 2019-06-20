@@ -18,6 +18,10 @@ namespace aframe.Views
 
     public static class OverlayExtensions
     {
+        public static Window ToWindow(
+            this IOverlay overlay)
+            => overlay as Window;
+
         public static bool SetOverlayVisible(
             this IOverlay overlay,
             ref bool overlayVisible,

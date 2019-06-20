@@ -64,6 +64,19 @@ namespace XIVNote.ViewModels
 
         #endregion Exit
 
+        #region AddWidget
+
+        private DelegateCommand addWidgetCommand;
+
+        public DelegateCommand AddWidgetCommand =>
+            this.addWidgetCommand ?? (this.addWidgetCommand = new DelegateCommand(this.ExecuteAddWidgetCommand));
+
+        private async void ExecuteAddWidgetCommand() => await Notes.Instance.AddNoteAsync(
+            Notes.Instance.NoteList.LastOrDefault(x => !x.IsDefault),
+            true);
+
+        #endregion AddWidget
+
         #region AddNote
 
         private DelegateCommand addNoteCommand;

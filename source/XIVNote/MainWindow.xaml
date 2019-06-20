@@ -49,7 +49,18 @@
       IconSource="XIVNote.ico"
       Visibility="Collapsed"
       LeftClickCommand="{Binding ShowCommand, Mode=OneWay}"
-      ToolTipText="{Binding Config.AppNameWithVersion, Mode=OneWay}" />
+      ToolTipText="{Binding Config.AppNameWithVersion, Mode=OneWay}">
+      <tb:TaskbarIcon.ContextMenu>
+        <ContextMenu>
+          <MenuItem Header="Show" Command="{Binding ShowCommand, Mode=OneWay}" />
+          <MenuItem Header="Config" Command="{Binding ShowConfigCommand, Mode=OneWay}" />
+          <Separator />
+          <MenuItem Header="Force Hide" IsCheckable="True" IsChecked="{Binding Config.IsForceHide, Mode=TwoWay}" />
+          <Separator />
+          <MenuItem Header="Exit" Command="{Binding ExitCommand, Mode=OneWay}" />
+        </ContextMenu>
+      </tb:TaskbarIcon.ContextMenu>
+    </tb:TaskbarIcon>
 
     <ScrollViewer
       Focusable="False"
@@ -146,11 +157,32 @@
         DockPanel.Dock="Right"
         HorizontalAlignment="Right"
         Height="30" Width="30"
+        Margin="5 0 0 0"
         Style="{DynamicResource IconButtonStyle}"
         Command="{Binding AddNoteCommand, Mode=OneWay}"
         ToolTip="Add Note">
         <iconPacks:PackIconMaterial Kind="Plus" Foreground="{DynamicResource WhiteBrush}" />
       </Button>
+
+      <Button
+        DockPanel.Dock="Right"
+        HorizontalAlignment="Right"
+        Height="30" Width="30"
+        Style="{DynamicResource IconButtonStyle}"
+        Command="{Binding AddWidgetCommand, Mode=OneWay}"
+        ToolTip="Add Widget">
+        <iconPacks:PackIconMaterial Kind="Web" Foreground="{DynamicResource WhiteBrush}" />
+      </Button>
+
+      <metro:ToggleSwitch
+        DockPanel.Dock="Right"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Center"
+        Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
+        Margin="0 0 5 0"
+        IsChecked="{Binding Config.IsForceHide, Mode=TwoWay}"
+        Content=""
+        ToolTip="Force hide" />
     </DockPanel>
   </Grid>
 </metro:MetroWindow>
