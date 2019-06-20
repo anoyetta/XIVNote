@@ -35,6 +35,8 @@ namespace XIVNote.Views
 
             this.Loaded += (_, __) =>
             {
+                this.ApplyLock();
+
                 this.ViewModel.Model.PropertyChanged += this.Model_PropertyChanged;
 
                 this.OverlayVisible = this.ViewModel.Model?.IsVisible ?? true;

@@ -17,7 +17,7 @@ namespace XIVNote
             { nameof(H), DefaultHeight },
             { nameof(IsStartupWithWindows), false },
             { nameof(IsMinimizeStartup), false },
-            { nameof(IsHideWhenNotExistsFFXIV), true },
+            { nameof(IsHideWhenNotExistsFFXIV), false },
             { nameof(ImageFileDirectory), Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) },
         };
     }
