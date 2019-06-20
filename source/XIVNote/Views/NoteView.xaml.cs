@@ -10,7 +10,7 @@ namespace XIVNote.Views
     /// <summary>
     /// NoteView.xaml の相互作用ロジック
     /// </summary>
-    public partial class NoteView : Window, IOverlay
+    public partial class NoteView : Window, INoteOverlay
     {
         public NoteView()
         {
@@ -19,6 +19,7 @@ namespace XIVNote.Views
             this.MinWidth = Note.MinWidth;
             this.MinHeight = Note.MinHeight;
 
+            this.Image.MouseLeftButtonDown += (_, __) => this.DragMove();
             this.ToolBarGrid.MouseLeftButtonDown += (_, __) => this.DragMove();
 
             this.MouseEnter += (_, __) => this.ToolBarGrid.Visibility = Visibility.Visible;
@@ -68,6 +69,12 @@ namespace XIVNote.Views
         public NoteViewModel ViewModel => this.DataContext as NoteViewModel;
 
         public Guid ID => this.ViewModel?.Model?.ID ?? Guid.Empty;
+
+        public Note Note
+        {
+            get => this.ViewModel.Model;
+            set => this.ViewModel.Model = value;
+        }
 
         private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {

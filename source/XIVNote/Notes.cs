@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Threading;
 using System.Xml.Serialization;
 using aframe;
+using aframe.Views;
 using XIVNote.Views;
 
 namespace XIVNote
@@ -115,7 +116,7 @@ namespace XIVNote
             }
         }
 
-        private readonly List<NoteView> NoteViews = new List<NoteView>(64);
+        private readonly List<INoteOverlay> NoteViews = new List<INoteOverlay>(64);
 
         public async Task ShowNotesAsync() => await WPFHelper.Dispatcher.InvokeAsync(async () =>
         {
@@ -128,10 +129,12 @@ namespace XIVNote
                     continue;
                 }
 
-                var view = new NoteView();
-                view.ViewModel.Model = model;
+                var view = !model.IsWidget ?
+                    new NoteView() as INoteOverlay :
+                    new WidgetView() as INoteOverlay;
+                view.Note = model;
 
-                view.Show();
+                view.ToWindow().Show();
 
                 this.NoteViews.Add(view);
                 await Task.Delay(10);
@@ -142,39 +145,49 @@ namespace XIVNote
         {
             foreach (var view in this.NoteViews)
             {
-                view.Close();
+                view.ToWindow().Close();
                 this.NoteViews.Remove(view);
             }
         });
 
         public async Task AddNoteAsync(
-            Note parentNote = null)
+            Note parentNote = null,
+            bool isWidget = false)
         {
             var note = Note.CreateNew();
 
             note.IsDefault = false;
+            note.IsWidget = isWidget;
+            if (isWidget)
+            {
+                note.Text = "https://www.anoyetta.com";
+            }
+
             this.NoteList.Add(note);
 
             await WPFHelper.Dispatcher.InvokeAsync(() =>
             {
-                var view = new NoteView();
-                view.ViewModel.Model = note;
+                var view = !isWidget ?
+                    new NoteView() as INoteOverlay :
+                    new WidgetView() as INoteOverlay;
+                view.Note = note;
 
-                view.Width = Note.DefaultNoteSize;
-                view.Height = Note.DefaultNoteSize;
+                var window = view.ToWindow();
+                window.Width = Note.DefaultNoteSize;
+                window.Height = Note.DefaultNoteSize;
 
                 if (parentNote == null)
                 {
-                    view.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                    window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
                 }
                 else
                 {
-                    view.WindowStartupLocation = WindowStartupLocation.Manual;
-                    view.Left = parentNote.X + parentNote.W + 3;
-                    view.Top = parentNote.Y;
+                    window.WindowStartupLocation = WindowStartupLocation.Manual;
+                    window.Left = parentNote.X + parentNote.W + 3;
+                    window.Top = parentNote.Y;
                 }
 
-                view.Show();
+                window.Show();
 
                 this.NoteViews.Add(view);
             });
@@ -191,7 +204,7 @@ namespace XIVNote
             {
                 if (toRemove != null)
                 {
-                    toRemove.Close();
+                    toRemove.ToWindow().Close();
                     this.NoteViews.Remove(toRemove);
                 }
             });
@@ -221,35 +234,44 @@ namespace XIVNote
         {
             Thread.Sleep(ForgroundAppSubscribeInterval.Add(ForgroundAppSubscribeInterval));
 
+            var isFirst = true;
             while (true)
             {
                 try
                 {
                     var isFFXIVActiveBack = IsFFXIVActive;
 
-                    if (Config.Instance.IsHideWhenNotExistsFFXIV)
+                    if (Config.Instance.IsForceHide)
                     {
-                        RefreshFFXIVIsActive();
+                        IsFFXIVActive = false;
                     }
                     else
                     {
-                        IsFFXIVActive = true;
+                        if (Config.Instance.IsHideWhenNotExistsFFXIV)
+                        {
+                            RefreshFFXIVIsActive();
+                        }
+                        else
+                        {
+                            IsFFXIVActive = true;
+                        }
                     }
 
-                    if (IsFFXIVActive != isFFXIVActiveBack)
+                    if (IsFFXIVActive != isFFXIVActiveBack ||
+                        isFirst)
                     {
+                        var value = IsFFXIVActive ?
+                            Visibility.Visible :
+                            Visibility.Hidden;
+
                         WPFHelper.Dispatcher.Invoke(() =>
                         {
                             foreach (var view in Notes.Instance.NoteViews)
                             {
-                                view.Visibility = IsFFXIVActive ?
-                                    Visibility.Visible :
-                                    Visibility.Hidden;
-
-                                Thread.Sleep(1);
+                                view.ToWindow().Visibility = value;
                             }
                         },
-                        DispatcherPriority.ContextIdle);
+                        DispatcherPriority.Background);
                     }
                 }
                 catch (ThreadAbortException)
@@ -262,12 +284,21 @@ namespace XIVNote
                 }
                 finally
                 {
+                    isFirst = false;
                     Thread.Sleep(ForgroundAppSubscribeInterval);
                 }
             }
         }
 
         private static volatile bool IsFFXIVActive;
+
+        private static readonly string[] ActiveTarets = new[]
+        {
+            "devenv.exe",
+            "ffxiv.exe",
+            "ffxiv_dx11.exe",
+            Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName),
+        };
 
         private static void RefreshFFXIVIsActive()
         {
@@ -286,12 +317,10 @@ namespace XIVNote
                     var fileName = Path.GetFileName(
                         p.MainModule.FileName);
 
-                    var currentProcessFileName = Path.GetFileName(
-                        Process.GetCurrentProcess().MainModule.FileName);
-
-                    if (fileName.ToLower() == "ffxiv.exe" ||
-                        fileName.ToLower() == "ffxiv_dx11.exe" ||
-                        fileName.ToLower() == currentProcessFileName.ToLower())
+                    if (ActiveTarets.Any(x => string.Equals(
+                        x,
+                        fileName,
+                        StringComparison.OrdinalIgnoreCase)))
                     {
                         IsFFXIVActive = true;
                     }

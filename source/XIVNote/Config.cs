@@ -128,6 +128,15 @@ namespace XIVNote
             }
         }
 
+        private bool isForceHide;
+
+        [JsonProperty(PropertyName = "is_force_hide")]
+        public bool IsForceHide
+        {
+            get => this.isForceHide;
+            set => this.SetProperty(ref this.isForceHide, value);
+        }
+
         private bool isStartupWithWindows;
 
         [JsonProperty(PropertyName = "is_startup_with_windows")]

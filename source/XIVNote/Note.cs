@@ -185,7 +185,25 @@ namespace XIVNote
         public string Text
         {
             get => this.text;
-            set => this.SetProperty(ref this.text, value);
+            set
+            {
+                if (this.SetProperty(ref this.text, value))
+                {
+                    this.RaisePropertyChanged(nameof(this.IsBlank));
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public bool IsBlank => string.IsNullOrEmpty(this.Text);
+
+        private bool isWidget;
+
+        [XmlAttribute]
+        public bool IsWidget
+        {
+            get => this.isWidget;
+            set => this.SetProperty(ref this.isWidget, value);
         }
 
         private readonly SuspendableObservableCollection<NoteImage> ImageList = new SuspendableObservableCollection<NoteImage>();

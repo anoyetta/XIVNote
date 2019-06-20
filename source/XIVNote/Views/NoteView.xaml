@@ -63,6 +63,7 @@
 
       <!-- Images -->
       <ItemsControl
+        x:Name="Image"
         Grid.Row="0"
         BorderThickness="0"
         Focusable="False"
