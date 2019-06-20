@@ -29,6 +29,14 @@ namespace XIVNote.ViewModels
 
         public Config Config => Config.Instance;
 
+        private DelegateCommand changeBackgroundCommand;
+
+        public DelegateCommand ChangeBackgroundCommand =>
+            this.changeBackgroundCommand ?? (this.changeBackgroundCommand = new DelegateCommand(
+                () => CommandHelper.ExecuteChangeColor(
+                    () => this.model.BackgroundColor,
+                    color => this.model.BackgroundColor = color)));
+
         #region Minimize
 
         private DelegateCommand minimizeCommand;

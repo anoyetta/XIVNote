@@ -173,7 +173,9 @@ namespace XIVNote
                 view.Note = note;
 
                 var window = view.ToWindow();
-                window.Width = Note.DefaultNoteSize;
+                window.Width = !isWidget ?
+                    Note.DefaultNoteSize :
+                    Note.DefaultWidgetNoteSize;
                 window.Height = Note.DefaultNoteSize;
 
                 if (parentNote == null)
