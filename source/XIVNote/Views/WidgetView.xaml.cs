@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using aframe;
 using aframe.Views;
 using CefSharp;
@@ -21,21 +22,20 @@ namespace XIVNote.Views
         {
             this.InitializeComponent();
             InitializeCef();
+            this.Topmost = true;
 
             this.MinWidth = Note.MinWidth;
             this.MinHeight = Note.MinHeight;
 
-            this.ToolBarGrid.MouseLeftButtonDown += (_, __) => this.DragMove();
+            this.ToolBarGrid.MouseLeftButtonDown += (_, __) => this.StartDragMove();
+            this.BackgroundBorder.MouseLeftButtonDown += (_, __) => this.StartDragMove();
 
             this.MouseEnter += (_, __) => this.ToolBarGrid.Visibility = Visibility.Visible;
             this.MouseLeave += (_, __) => this.ToolBarGrid.Visibility = Visibility.Collapsed;
 
             this.Loaded += (_, __) =>
             {
-                if (this.ViewModel.Model != null)
-                {
-                    this.ViewModel.Model.PropertyChanged += this.Model_PropertyChanged;
-                }
+                this.ViewModel.Model.PropertyChanged += this.Model_PropertyChanged;
 
                 this.OverlayVisible = this.ViewModel.Model?.IsVisible ?? true;
 
@@ -45,16 +45,19 @@ namespace XIVNote.Views
 
                 this.SubscribeZOrderCorrector();
 
+                this.CefBrowser.LoadingStateChanged += async (___, e) =>
+                    await WPFHelper.Dispatcher.InvokeAsync(() =>
+                        this.LoadingLabel.Visibility = e.IsLoading ?
+                            Visibility.Visible :
+                            Visibility.Collapsed);
+
                 this.CefBrowser.Address = this.Note?.Text;
                 this.WebGrid.Children.Add(this.CefBrowser);
             };
 
             this.Closed += (_, __) =>
             {
-                if (this.ViewModel.Model != null)
-                {
-                    this.ViewModel.Model.PropertyChanged -= this.Model_PropertyChanged;
-                }
+                this.ViewModel.Model.PropertyChanged -= this.Model_PropertyChanged;
             };
 
             this.LeftThumb.DragDelta += (_, e) =>
@@ -133,6 +136,8 @@ namespace XIVNote.Views
             Cef.Initialize(settings);
         }
 
+        private readonly SolidColorBrush SemiTransparent = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#01000000"));
+
         private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             var model = sender as Note;
@@ -147,11 +152,33 @@ namespace XIVNote.Views
                     this.NaviateUrl(this.ViewModel.Model.Text);
                     break;
 
+                case nameof(Note.IsLock):
+                    this.ApplyLock();
+                    break;
+
                 default:
                     break;
             }
 
             WidgetViewModel.IsSaveQueue = true;
+        }
+
+        private void StartDragMove()
+        {
+            if (!this.Note.IsLock)
+            {
+                this.DragMove();
+            }
+        }
+
+        private void ApplyLock()
+        {
+            this.ResizeMode = this.Note.IsLock ?
+                ResizeMode.NoResize :
+                ResizeMode.CanResizeWithGrip;
+            this.Background = this.Note.IsLock ?
+                Brushes.Transparent :
+                this.SemiTransparent;
         }
 
         private void NavigateButton_Click(object sender, RoutedEventArgs e)
