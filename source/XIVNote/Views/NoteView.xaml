@@ -58,70 +58,12 @@
     <Grid>
       <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
-        <RowDefinition Height="Auto" />
         <RowDefinition />
       </Grid.RowDefinitions>
 
-      <!-- Tool Bar -->
-      <Grid Grid.Row="0" x:Name="ToolBarGrid">
-        <Border
-          Panel.ZIndex="-1"
-          CornerRadius="1"
-          Background="{DynamicResource WhiteBrush}" />
-
-        <DockPanel
-          Margin="2">
-
-          <Button
-            DockPanel.Dock="Left" HorizontalAlignment="Left"
-            Height="30" Width="30"
-            Style="{DynamicResource AlterIconButtonStyle}"
-            Command="{Binding AddNoteCommand, Mode=OneWay}"
-            ToolTip="Add Note">
-            <iconPacks:PackIconMaterial Kind="Plus" />
-          </Button>
-
-          <Button
-            DockPanel.Dock="Left" HorizontalAlignment="Left"
-            Height="30" Width="30"
-            Style="{DynamicResource AlterIconButtonStyle}"
-            Command="{Binding Model.AddImageCommand, Mode=OneWay}"
-            ToolTip="Add Image">
-            <iconPacks:PackIconMaterial Kind="Image" />
-          </Button>
-
-          <Button
-            DockPanel.Dock="Left" HorizontalAlignment="Left"
-            Height="30" Width="30"
-            Style="{DynamicResource AlterIconButtonStyle}"
-            Command="{Binding ShowConfigCommand, Mode=OneWay}"
-            ToolTip="Settings">
-            <iconPacks:PackIconFontAwesome Kind="EllipsisHSolid" />
-          </Button>
-
-          <Button
-            DockPanel.Dock="Right" HorizontalAlignment="Right"
-            Height="30" Width="30"
-            Style="{DynamicResource AlterIconButtonStyle}"
-            Command="{Binding CloseCommand, Mode=OneWay}"
-            ToolTip="Remove">
-            <iconPacks:PackIconMaterial Kind="Close" />
-          </Button>
-
-          <Button
-            DockPanel.Dock="Right" HorizontalAlignment="Right"
-            Height="30" Width="30"
-            Style="{DynamicResource AlterIconButtonStyle}"
-            Command="{Binding MinimizeCommand, Mode=OneWay}"
-            ToolTip="Hide">
-            <iconPacks:PackIconMaterial Kind="ArrowCollapseDown" />
-          </Button>
-        </DockPanel>
-      </Grid>
-
       <!-- Images -->
       <ItemsControl
-        Grid.Row="1"
+        Grid.Row="0"
         BorderThickness="0"
         Focusable="False"
         IsTabStop="False"
@@ -176,7 +118,7 @@
       <!-- Text -->
       <TextBox
         x:Name="NoteTextBox"
-        Grid.Row="2"
+        Grid.Row="1"
         Margin="2"
         VerticalAlignment="Stretch"
         HorizontalAlignment="Stretch"
@@ -196,7 +138,65 @@
         FontStyle="{Binding Model.Font.Style, Mode=OneWay}"
         FontStretch="{Binding Model.Font.Stretch, Mode=OneWay}"
         Foreground="{Binding Model.ForegroundBrush, Mode=OneWay}"
-        Text="{Binding Model.Text, Mode=TwoWay}" />
+        Text="{Binding Model.Text, Mode=TwoWay}"
+        CaretBrush="#e2041b" />
+    </Grid>
+
+    <!-- Tool Bar -->
+    <Grid
+      x:Name="ToolBarGrid"
+      VerticalAlignment="Bottom">
+      <Border
+        Panel.ZIndex="-1"
+        CornerRadius="1"
+        Background="{DynamicResource WhiteBrush}" />
+
+      <DockPanel Margin="2">
+        <Button
+          DockPanel.Dock="Left" HorizontalAlignment="Left"
+          Height="30" Width="30"
+          Style="{DynamicResource AlterIconButtonStyle}"
+          Command="{Binding AddNoteCommand, Mode=OneWay}"
+          ToolTip="Add Note">
+          <iconPacks:PackIconMaterial Kind="Plus" />
+        </Button>
+
+        <Button
+          DockPanel.Dock="Left" HorizontalAlignment="Left"
+          Height="30" Width="30"
+          Style="{DynamicResource AlterIconButtonStyle}"
+          Command="{Binding Model.AddImageCommand, Mode=OneWay}"
+          ToolTip="Add Image">
+          <iconPacks:PackIconMaterial Kind="Image" />
+        </Button>
+
+        <Button
+          DockPanel.Dock="Left" HorizontalAlignment="Left"
+          Height="30" Width="30"
+          Style="{DynamicResource AlterIconButtonStyle}"
+          Command="{Binding ShowConfigCommand, Mode=OneWay}"
+          ToolTip="Settings">
+          <iconPacks:PackIconFontAwesome Kind="EllipsisHSolid" />
+        </Button>
+
+        <Button
+          DockPanel.Dock="Right" HorizontalAlignment="Right"
+          Height="30" Width="30"
+          Style="{DynamicResource AlterIconButtonStyle}"
+          Command="{Binding CloseCommand, Mode=OneWay}"
+          ToolTip="Remove">
+          <iconPacks:PackIconMaterial Kind="Close" />
+        </Button>
+
+        <Button
+          DockPanel.Dock="Right" HorizontalAlignment="Right"
+          Height="30" Width="30"
+          Style="{DynamicResource AlterIconButtonStyle}"
+          Command="{Binding MinimizeCommand, Mode=OneWay}"
+          ToolTip="Hide">
+          <iconPacks:PackIconMaterial Kind="ArrowCollapseDown" />
+        </Button>
+      </DockPanel>
     </Grid>
   </Grid>
 </Window>
