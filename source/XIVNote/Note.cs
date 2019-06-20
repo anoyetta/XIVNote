@@ -54,6 +54,15 @@ namespace XIVNote
             set => this.SetProperty(ref this.h, Math.Round(value, 1));
         }
 
+        private bool isLock;
+
+        [XmlAttribute]
+        public bool IsLock
+        {
+            get => this.isLock;
+            set => this.SetProperty(ref this.isLock, value);
+        }
+
         private Color foregroundColor = Colors.Black;
 
         [XmlIgnore]

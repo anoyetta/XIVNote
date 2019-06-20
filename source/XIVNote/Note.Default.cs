@@ -8,6 +8,7 @@ namespace XIVNote
     public partial class Note : BindableBase
     {
         public static readonly double DefaultNoteSize = 350;
+        public static readonly double DefaultWidgetNoteSize = 530;
 
         public static readonly double MinWidth = 200;
 

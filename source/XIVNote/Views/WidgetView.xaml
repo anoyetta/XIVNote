@@ -43,6 +43,23 @@
     <Thumb Name="TopThumb" Panel.ZIndex="100" VerticalAlignment="Top" Height="2" BorderThickness="1.5" BorderBrush="Transparent" Cursor="SizeNS" Opacity="0.5" />
     <Thumb Name="BottomThumb" Panel.ZIndex="100" VerticalAlignment="Bottom" Height="2" BorderThickness="1.5" BorderBrush="Transparent" Cursor="SizeNS" Opacity="0.5" />
 
+    <!-- Background Border -->
+    <Border
+      x:Name="BackgroundBorder"
+      Panel.ZIndex="-2"
+      CornerRadius="1"
+      Background="{Binding Model.BackgroundBrush, Mode=OneWay}"
+      Visibility="{Binding Model.IsBlank, Mode=OneWay, Converter={StaticResource NotVisibilityConverter}}">
+      <Label
+        x:Name="LoadingLabel"
+        HorizontalContentAlignment="Center"
+        VerticalContentAlignment="Center"
+        FontFamily="Century Gothic"
+        FontSize="20"
+        Foreground="#383c3c"
+        Content="Loading..." />
+    </Border>
+
     <!-- Blank -->
     <Label
       Panel.ZIndex="-1"
@@ -51,7 +68,7 @@
       HorizontalContentAlignment="Center"
       VerticalContentAlignment="Center"
       FontFamily="Century Gothic"
-      FontSize="40"
+      FontSize="20"
       Content="about:blank"
       Opacity="0.6"
       Visibility="{Binding Model.IsBlank, Mode=OneWay, Converter={StaticResource VisibilityConverter}}" />
@@ -59,7 +76,6 @@
     <!-- CEF WebBrowser -->
     <Grid
       x:Name="WebGrid"
-      Opacity="{Binding Model.Opacity, Mode=OneWay}"
       Visibility="{Binding Model.IsBlank, Mode=OneWay, Converter={StaticResource NotVisibilityConverter}}" />
 
     <!-- URL -->
@@ -82,7 +98,14 @@
         Padding="12">
         <StackPanel Orientation="Horizontal">
           <TextBlock Text="URL" Margin="0 0 10 0" VerticalAlignment="Center" />
-          <TextBox x:Name="UrlTextBox" Width="400" Height="32" VerticalContentAlignment="Center" Text="{Binding Model.Text, Mode=TwoWay}" />
+          <TextBox
+            x:Name="UrlTextBox"
+            Width="400"
+            Height="32"
+            VerticalContentAlignment="Center"
+            FontSize="17"
+            FontFamily="Consolas"
+            Text="{Binding Model.Text, Mode=TwoWay}" />
         </StackPanel>
       </Border>
     </Border>
@@ -113,19 +136,37 @@
           <iconPacks:PackIconMaterial Kind="Web" />
         </Button>
 
-        <StackPanel Orientation="Horizontal" Margin="5 1 0 1">
-          <metro:NumericUpDown
-            BorderThickness="0"
-            HorizontalAlignment="Left"
-            StringFormat="N2"
-            Interval="0.01"
-            Width="95"
-            Maximum="1"
-            Minimum="0"
-            FontSize="16"
-            Value="{Binding Model.Opacity, Mode=TwoWay}"
-            ToolTip="Opacity" />
-        </StackPanel>
+        <Button
+          DockPanel.Dock="Left" HorizontalAlignment="Left"
+          Margin="5 1 0 1"
+          Focusable="False"
+          Width="60"
+          Height="30"
+          Background="{Binding Model.BackgroundBrush, Mode=OneWay}"
+          Command="{Binding ChangeBackgroundCommand, Mode=OneWay}"
+          ToolTip="Background Color" />
+
+        <metro:NumericUpDown
+          DockPanel.Dock="Left" HorizontalAlignment="Left"
+          Margin="5 1 0 1"
+          BorderThickness="0"
+          StringFormat="N2"
+          Interval="0.01"
+          Width="90"
+          Maximum="1"
+          Minimum="0"
+          FontSize="16"
+          Value="{Binding Model.Opacity, Mode=TwoWay}"
+          ToolTip="Opacity" />
+
+        <metro:ToggleSwitch
+          DockPanel.Dock="Left" HorizontalAlignment="Left"
+          Margin="10 1 0 1"
+          VerticalAlignment="Center"
+          Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
+          IsChecked="{Binding Model.IsLock, Mode=TwoWay}"
+          Content=""
+          ToolTip="Lock" />
 
         <Button
           DockPanel.Dock="Right" HorizontalAlignment="Right"
