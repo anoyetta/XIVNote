@@ -46,6 +46,24 @@ namespace aframe.Views
             return false;
         }
 
+        public static void InitializeOverlayVisible(
+            this IOverlay overlay,
+            ref bool overlayVisible,
+            bool newValue,
+            double opacity = 1.0d)
+        {
+            overlayVisible = newValue;
+
+            if (overlayVisible)
+            {
+                overlay.ShowOverlay(opacity);
+            }
+            else
+            {
+                overlay.HideOverlay();
+            }
+        }
+
         public static bool ShowOverlay(
             this IOverlay overlay,
             double opacity = 1.0d)

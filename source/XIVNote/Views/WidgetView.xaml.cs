@@ -37,7 +37,9 @@ namespace XIVNote.Views
                     this.ViewModel.Model.PropertyChanged += this.Model_PropertyChanged;
                 }
 
-                this.OverlayVisible = this.ViewModel.Model?.IsVisible ?? true;
+                this.InitializeOverlayVisible(
+                    ref this.overlayVisible,
+                    this.ViewModel.Model?.IsVisible ?? true);
 
                 this.ToolBarGrid.Visibility = this.IsMouseOver ?
                     Visibility.Visible :
