@@ -63,6 +63,9 @@ namespace XIVNote
             set => this.SetProperty(ref this.isLock, value);
         }
 
+        [XmlIgnore]
+        public static readonly Color WidgetForegroundColor = (Color)ColorConverter.ConvertFromString("#2b2b2b");
+
         private Color foregroundColor = Colors.Black;
 
         [XmlIgnore]

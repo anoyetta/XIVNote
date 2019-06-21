@@ -129,6 +129,11 @@ namespace XIVNote
                     continue;
                 }
 
+                if (model.IsWidget)
+                {
+                    model.ForegroundColor = Note.WidgetForegroundColor;
+                }
+
                 var view = !model.IsWidget ?
                     new NoteView() as INoteOverlay :
                     new WidgetView() as INoteOverlay;
@@ -161,6 +166,7 @@ namespace XIVNote
             if (isWidget)
             {
                 note.Text = "https://www.anoyetta.com";
+                note.ForegroundColor = Note.WidgetForegroundColor;
             }
 
             this.NoteList.Add(note);
@@ -185,8 +191,24 @@ namespace XIVNote
                 else
                 {
                     window.WindowStartupLocation = WindowStartupLocation.Manual;
-                    window.Left = parentNote.X + parentNote.W + 3;
-                    window.Top = parentNote.Y;
+
+                    var left = parentNote.X + parentNote.W + 3;
+                    var top = parentNote.Y;
+
+                    // マルチモニタを含めたデスクトップ領域を取得する
+                    var w = SystemParameters.VirtualScreenWidth;
+                    var h = SystemParameters.VirtualScreenHeight;
+
+                    // デスクトップ領域からはみ出ている？
+                    if ((left + window.Width) > w ||
+                        (top + window.Height) >= h)
+                    {
+                        left = parentNote.X + 10;
+                        top = parentNote.Y + 10;
+                    }
+
+                    window.Left = left;
+                    window.Top = top;
                 }
 
                 window.Show();

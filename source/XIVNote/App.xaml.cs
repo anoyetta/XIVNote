@@ -80,7 +80,7 @@ namespace XIVNote
 
         private static Assembly CefSharpResolver(object sender, ResolveEventArgs args)
         {
-            if (args.Name.StartsWith("CefSharp"))
+            if (args.Name.StartsWith("CefSharp", StringComparison.OrdinalIgnoreCase))
             {
                 var assemblyName = args.Name.Split(new[] { ',' }, 2)[0] + ".dll";
                 var archSpecificPath = Path.Combine(
