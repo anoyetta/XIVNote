@@ -138,6 +138,15 @@
 
         <Button
           DockPanel.Dock="Left" HorizontalAlignment="Left"
+          Height="30" Width="30"
+          Style="{DynamicResource AlterIconButtonStyle}"
+          Click="DevToolButton_Click"
+          ToolTip="DevTools">
+          <iconPacks:PackIconMaterial Kind="Wrench" />
+        </Button>
+
+        <Button
+          DockPanel.Dock="Left" HorizontalAlignment="Left"
           Margin="5 1 0 1"
           Focusable="False"
           Width="60"

@@ -2,6 +2,8 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -50,10 +52,20 @@ namespace XIVNote.Views
                 this.SubscribeZOrderCorrector();
 
                 this.CefBrowser.LoadingStateChanged += async (___, e) =>
+                {
+                    /*
+                    // 動かないので封印
+                    if (!e.IsLoading)
+                    {
+                        this.InjectUserCSS();
+                    }
+                    */
+
                     await WPFHelper.Dispatcher.InvokeAsync(() =>
                         this.LoadingLabel.Visibility = e.IsLoading ?
                             Visibility.Visible :
                             Visibility.Collapsed);
+                };
 
                 this.CefBrowser.Address = this.Note?.Text;
                 this.WebGrid.Children.Add(this.CefBrowser);
@@ -110,28 +122,49 @@ namespace XIVNote.Views
             set => this.ViewModel.Model = value;
         }
 
-        private Lazy<ChromiumWebBrowser> LazyCefBrowser = new Lazy<ChromiumWebBrowser>(() => new ChromiumWebBrowser());
+        private Lazy<ChromiumWebBrowser> LazyCefBrowser = new Lazy<ChromiumWebBrowser>(() =>
+        {
+            var browser = new ChromiumWebBrowser()
+            {
+                RequestHandler = new WidgetRequestHandler(),
+                BrowserSettings = new BrowserSettings()
+                {
+                    FileAccessFromFileUrls = CefState.Enabled,
+                    UniversalAccessFromFileUrls = CefState.Enabled,
+                    WindowlessFrameRate = 30,
+                },
+            };
+
+            return browser;
+        });
 
         public ChromiumWebBrowser CefBrowser => this.LazyCefBrowser.Value;
 
         private static volatile bool isInitialized = false;
+        private static readonly object CefLocker = new object();
 
         public static void InitializeCef()
         {
-            if (isInitialized)
+            lock (CefLocker)
             {
-                return;
+                if (isInitialized)
+                {
+                    return;
+                }
+
+                isInitialized = true;
             }
 
-            isInitialized = true;
-
             var settings = new CefSettings();
+
             settings.BrowserSubprocessPath = Path.Combine(
                 AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
                 Environment.Is64BitProcess ? "x64" : "x86",
                 "CefSharp.BrowserSubprocess.exe");
+
             settings.Locale = CultureInfo.CurrentCulture.Parent.ToString();
             settings.AcceptLanguageList = CultureInfo.CurrentCulture.Name;
+
             settings.CachePath = Path.Combine(
                 Path.GetTempPath(),
                 "XIVNote");
@@ -140,9 +173,27 @@ namespace XIVNote.Views
                 "XIVNote",
                 "browser.log");
             settings.LogSeverity = LogSeverity.Warning;
+
+            // GPUアクセラレータを切る
             settings.DisableGpuAcceleration();
 
+            Cef.EnableHighDPISupport();
             Cef.Initialize(settings);
+
+            // shutdown を仕込む
+            App.Current.Exit += (_, __) => Cef.Shutdown();
+        }
+
+        private async void InjectUserCSS()
+        {
+            var css = new StringBuilder();
+            css.AppendLine(@"<style type=""text/css"">");
+            css.AppendLine(@"body { font-family: HackGen, sans-serif !important; }");
+            css.AppendLine(@"</style>");
+
+            var script = "(function() {{ $('head').append('" + css.ToString() + "'); return true; }}) ();";
+
+            await this.CefBrowser.GetMainFrame().EvaluateScriptAsync(script, null);
         }
 
         private readonly SolidColorBrush SemiTransparent = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#01000000"));
@@ -209,6 +260,11 @@ namespace XIVNote.Views
             => await WPFHelper.Dispatcher.InvokeAsync(
                 () => this.CefBrowser.Address = url);
 
+        private void DevToolButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.CefBrowser.ShowDevTools();
+        }
+
         #region IOverlay
 
         public int ZOrder => 0;
@@ -222,5 +278,64 @@ namespace XIVNote.Views
         }
 
         #endregion IOverlay
+    }
+
+    public class WidgetRequestHandler : IRequestHandler
+    {
+        public CefReturnValue OnBeforeResourceLoad(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IRequestCallback callback)
+            => CefReturnValue.Continue;
+
+        public bool CanGetCookies(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request)
+            => true;
+
+        public bool CanSetCookie(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, Cookie cookie)
+            => true;
+
+        public bool GetAuthCredentials(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, bool isProxy, string host, int port, string realm, string scheme, IAuthCallback callback)
+            => true;
+
+        public IResponseFilter GetResourceResponseFilter(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IResponse response)
+            => null;
+
+        public bool OnBeforeBrowse(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect)
+            => false;
+
+        public bool OnCertificateError(IWebBrowser chromiumWebBrowser, IBrowser browser, CefErrorCode errorCode, string requestUrl, ISslInfo sslInfo, IRequestCallback callback)
+            => true;
+
+        public bool OnOpenUrlFromTab(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, string targetUrl, WindowOpenDisposition targetDisposition, bool userGesture)
+            => false;
+
+        public void OnPluginCrashed(IWebBrowser chromiumWebBrowser, IBrowser browser, string pluginPath)
+        {
+        }
+
+        public bool OnProtocolExecution(IWebBrowser chromiumWebBrowser, IBrowser browser, string url)
+            => true;
+
+        public bool OnQuotaRequest(IWebBrowser chromiumWebBrowser, IBrowser browser, string originUrl, long newSize, IRequestCallback callback)
+            => true;
+
+        public void OnRenderProcessTerminated(IWebBrowser chromiumWebBrowser, IBrowser browser, CefTerminationStatus status)
+        {
+        }
+
+        public void OnRenderViewReady(IWebBrowser chromiumWebBrowser, IBrowser browser)
+        {
+        }
+
+        public void OnResourceLoadComplete(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IResponse response, UrlRequestStatus status, long receivedContentLength)
+        {
+        }
+
+        public void OnResourceRedirect(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IResponse response, ref string newUrl)
+        {
+        }
+
+        public bool OnResourceResponse(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IResponse response)
+            => false;
+
+        public bool OnSelectClientCertificate(IWebBrowser chromiumWebBrowser, IBrowser browser, bool isProxy, string host, int port, X509Certificate2Collection certificates, ISelectClientCertificateCallback callback)
+            => false;
     }
 }
