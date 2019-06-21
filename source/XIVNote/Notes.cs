@@ -191,8 +191,24 @@ namespace XIVNote
                 else
                 {
                     window.WindowStartupLocation = WindowStartupLocation.Manual;
-                    window.Left = parentNote.X + parentNote.W + 3;
-                    window.Top = parentNote.Y;
+
+                    var left = parentNote.X + parentNote.W + 3;
+                    var top = parentNote.Y;
+
+                    // マルチモニタを含めたデスクトップ領域を取得する
+                    var w = SystemParameters.VirtualScreenWidth;
+                    var h = SystemParameters.VirtualScreenHeight;
+
+                    // デスクトップ領域からはみ出ている？
+                    if ((left + window.Width) > w ||
+                        (top + window.Height) >= h)
+                    {
+                        left = parentNote.X + 10;
+                        top = parentNote.Y + 10;
+                    }
+
+                    window.Left = left;
+                    window.Top = top;
                 }
 
                 window.Show();
