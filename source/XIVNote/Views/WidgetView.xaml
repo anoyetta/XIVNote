@@ -38,6 +38,11 @@
   prism:ViewModelLocator.AutoWireViewModel="True">
 
   <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
     <Thumb Name="LeftThumb" Panel.ZIndex="100" HorizontalAlignment="Left" Width="2" BorderThickness="1.5" BorderBrush="Transparent" Cursor="SizeWE" Opacity="0.5" />
     <Thumb Name="RightThumb" Panel.ZIndex="100" HorizontalAlignment="Right" Width="2" BorderThickness="1.5" BorderBrush="Transparent" Cursor="SizeWE" Opacity="0.5" />
     <Thumb Name="TopThumb" Panel.ZIndex="100" VerticalAlignment="Top" Height="2" BorderThickness="1.5" BorderBrush="Transparent" Cursor="SizeNS" Opacity="0.5" />
@@ -45,6 +50,7 @@
 
     <!-- Background Border -->
     <Border
+      Grid.Row="0"
       x:Name="BackgroundBorder"
       Panel.ZIndex="-2"
       CornerRadius="1"
@@ -62,6 +68,7 @@
 
     <!-- Blank -->
     <Label
+      Grid.Row="0"
       Panel.ZIndex="-1"
       Background="#f8f4e6"
       Foreground="#383c3c"
@@ -73,13 +80,9 @@
       Opacity="0.6"
       Visibility="{Binding Model.IsBlank, Mode=OneWay, Converter={StaticResource VisibilityConverter}}" />
 
-    <!-- CEF WebBrowser -->
-    <Grid
-      x:Name="WebGrid"
-      Visibility="{Binding Model.IsBlank, Mode=OneWay, Converter={StaticResource NotVisibilityConverter}}" />
-
     <!-- URL -->
     <Border
+      Grid.Row="0"
       x:Name="UrlPanel"
       Panel.ZIndex="1"
       Background="#66000000"
@@ -110,8 +113,15 @@
       </Border>
     </Border>
 
+    <!-- CEF WebBrowser -->
+    <Grid
+      Grid.Row="0"
+      x:Name="WebGrid"
+      Visibility="{Binding Model.IsBlank, Mode=OneWay, Converter={StaticResource NotVisibilityConverter}}" />
+
     <!-- Tool Bar -->
     <Grid
+      Grid.Row="1"
       Panel.ZIndex="10"
       x:Name="ToolBarGrid"
       VerticalAlignment="Bottom">
@@ -147,10 +157,10 @@
 
         <Button
           DockPanel.Dock="Left" HorizontalAlignment="Left"
-          Margin="5 1 0 1"
+          Margin="5 3 0 3"
           Focusable="False"
-          Width="60"
-          Height="30"
+          Width="25"
+          Height="25"
           Background="{Binding Model.BackgroundBrush, Mode=OneWay}"
           Command="{Binding ChangeBackgroundCommand, Mode=OneWay}"
           ToolTip="Background Color" />
@@ -166,7 +176,7 @@
           Minimum="0"
           FontSize="16"
           Value="{Binding Model.Opacity, Mode=TwoWay}"
-          ToolTip="Opacity" />
+          ToolTip="Background Opacity" />
 
         <metro:ToggleSwitch
           DockPanel.Dock="Left" HorizontalAlignment="Left"

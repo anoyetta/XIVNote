@@ -220,7 +220,8 @@ namespace aframe.Views
                     }
 
                     if (overlay is Window window &&
-                        window.IsLoaded)
+                        window.IsLoaded &&
+                        !window.Topmost)
                     {
                         if (!overlay.IsOverlaysGameWindow())
                         {
@@ -243,10 +244,10 @@ namespace aframe.Views
         private static bool IsOverlaysGameWindow(
             this IOverlay overlay)
         {
-            var xivHandle = GetGameWindowHandle();
+            var gameHandle = GetGameWindowHandle();
             var handle = overlay.GetHandle();
 
-            if (xivHandle == IntPtr.Zero)
+            if (gameHandle == IntPtr.Zero)
             {
                 return false;
             }
@@ -254,7 +255,7 @@ namespace aframe.Views
             while (handle != IntPtr.Zero)
             {
                 // Overlayウィンドウよりも前面側にFF14のウィンドウがあった
-                if (handle == xivHandle)
+                if (handle == gameHandle)
                 {
                     return false;
                 }
@@ -280,38 +281,38 @@ namespace aframe.Views
                 NativeMethods.SWP_NOSIZE | NativeMethods.SWP_NOMOVE | NativeMethods.SWP_NOACTIVATE);
         }
 
-        private static object xivProcLocker = new object();
-        private static Process xivProc;
+        private static readonly object gameProcLocker = new object();
+        private static Process gameProc;
         private static DateTime lastTry;
         private static TimeSpan tryInterval = new TimeSpan(0, 0, 15);
 
         private static IntPtr GetGameWindowHandle()
         {
-            lock (xivProcLocker)
+            lock (gameProcLocker)
             {
                 try
                 {
                     // プロセスがすでに終了してるならプロセス情報をクリア
-                    if (xivProc != null && xivProc.HasExited)
+                    if (gameProc != null && gameProc.HasExited)
                     {
-                        xivProc = null;
+                        gameProc = null;
                     }
 
                     // プロセス情報がなく、tryIntervalよりも時間が経っているときは新たに取得を試みる
-                    if (xivProc == null && DateTime.Now - lastTry > tryInterval)
+                    if (gameProc == null && DateTime.Now - lastTry > tryInterval)
                     {
-                        xivProc = Process.GetProcessesByName("ffxiv").FirstOrDefault();
-                        if (xivProc == null)
+                        gameProc = Process.GetProcessesByName("ffxiv").FirstOrDefault();
+                        if (gameProc == null)
                         {
-                            xivProc = Process.GetProcessesByName("ffxiv_dx11").FirstOrDefault();
+                            gameProc = Process.GetProcessesByName("ffxiv_dx11").FirstOrDefault();
                         }
 
                         lastTry = DateTime.Now;
                     }
 
-                    if (xivProc != null)
+                    if (gameProc != null)
                     {
-                        return xivProc.MainWindowHandle;
+                        return gameProc.MainWindowHandle;
                     }
                 }
                 catch (System.ComponentModel.Win32Exception) { }

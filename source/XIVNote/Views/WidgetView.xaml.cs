@@ -20,6 +20,9 @@ namespace XIVNote.Views
     /// </summary>
     public partial class WidgetView : Window, INoteOverlay
     {
+        private static readonly double VisibleOpacity = 1;
+        private static readonly double HideOpacity = 0.001;
+
         public WidgetView()
         {
             this.InitializeComponent();
@@ -32,8 +35,8 @@ namespace XIVNote.Views
             this.ToolBarGrid.MouseLeftButtonDown += (_, __) => this.StartDragMove();
             this.BackgroundBorder.MouseLeftButtonDown += (_, __) => this.StartDragMove();
 
-            this.MouseEnter += (_, __) => this.ToolBarGrid.Visibility = Visibility.Visible;
-            this.MouseLeave += (_, __) => this.ToolBarGrid.Visibility = Visibility.Collapsed;
+            this.MouseEnter += (_, __) => this.ToolBarGrid.Opacity = VisibleOpacity;
+            this.MouseLeave += (_, __) => this.ToolBarGrid.Opacity = HideOpacity;
 
             this.Loaded += (_, __) =>
             {
@@ -45,9 +48,7 @@ namespace XIVNote.Views
                     ref this.overlayVisible,
                     this.ViewModel.Model?.IsVisible ?? true);
 
-                this.ToolBarGrid.Visibility = this.IsMouseOver ?
-                    Visibility.Visible :
-                    Visibility.Collapsed;
+                this.ToolBarGrid.Opacity = this.IsMouseOver ? VisibleOpacity : HideOpacity;
 
                 this.SubscribeZOrderCorrector();
 
