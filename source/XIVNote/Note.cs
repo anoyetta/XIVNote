@@ -18,6 +18,24 @@ namespace XIVNote
         [XmlIgnore]
         public Guid ID { get; private set; } = Guid.NewGuid();
 
+        private string name;
+
+        [XmlAttribute]
+        public string Name
+        {
+            get => this.name;
+            set
+            {
+                if (this.SetProperty(ref this.name, value))
+                {
+                    this.RaisePropertyChanged(nameof(this.IsExistsName));
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public bool IsExistsName => !string.IsNullOrEmpty(this.Name);
+
         private double x;
 
         [XmlAttribute]
@@ -345,6 +363,28 @@ namespace XIVNote
         }
 
         #endregion RemoveImage
+
+        #region Refresh Callback
+
+        [XmlIgnore]
+        public Action RefreshCallback { get; set; }
+
+        private DelegateCommand refreshCommand;
+
+        public DelegateCommand RefreshCommand =>
+            this.refreshCommand ?? (this.refreshCommand = new DelegateCommand(this.ExecuteRefreshCommand));
+
+        private async void ExecuteRefreshCommand()
+        {
+            if (!this.IsWidget)
+            {
+                return;
+            }
+
+            await Task.Run(() => this.RefreshCallback?.Invoke());
+        }
+
+        #endregion Refresh Callback
 
         #region Close
 

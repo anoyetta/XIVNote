@@ -68,6 +68,8 @@ namespace XIVNote.Views
                             Visibility.Collapsed);
                 };
 
+                this.Note.RefreshCallback = () => this.CefBrowser.Reload();
+
                 this.CefBrowser.Address = this.Note?.Text;
                 this.WebGrid.Children.Add(this.CefBrowser);
             };
@@ -102,15 +104,22 @@ namespace XIVNote.Views
             this.UrlPanel.MouseLeftButtonUp += (_, __)
                 => this.UrlPanel.Visibility = Visibility.Collapsed;
 
-            this.UrlTextBox.KeyUp += async (_, e) =>
+            this.UrlTextBox.KeyUp += (_, e) => closeInputBox(e);
+            this.NameTextBox.KeyUp += (_, e) => closeInputBox(e);
+
+            async void closeInputBox(KeyEventArgs e)
             {
                 if (e.Key == Key.Enter)
                 {
                     this.UrlPanel.Visibility = Visibility.Collapsed;
                     await WPFHelper.Dispatcher.InvokeAsync(
-                        () => this.ViewModel.Model.Text = this.UrlTextBox.Text);
+                        () =>
+                        {
+                            this.ViewModel.Model.Text = this.UrlTextBox.Text;
+                            this.ViewModel.Model.Name = this.NameTextBox.Text;
+                        });
                 }
-            };
+            }
         }
 
         public WidgetViewModel ViewModel => this.DataContext as WidgetViewModel;
@@ -260,6 +269,11 @@ namespace XIVNote.Views
             string url)
             => await WPFHelper.Dispatcher.InvokeAsync(
                 () => this.CefBrowser.Address = url);
+
+        private void ReloadButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Note.RefreshCommand.Execute();
+        }
 
         private void DevToolButton_Click(object sender, RoutedEventArgs e)
         {

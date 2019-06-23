@@ -94,17 +94,29 @@
                 CornerRadius="2"
                 Background="{Binding BackgroundBrush, Mode=OneWay}" />
 
-              <TextBlock
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left"
-                Margin="8"
-                Height="60"
-                Foreground="{Binding ForegroundBrush, Mode=OneWay}"
-                Text="{Binding Text, Mode=OneWay}"
-                FontFamily="'Century Gothic', 'Yu Gothic'"
-                FontSize="15"
-                TextWrapping="Wrap"
-                TextTrimming="WordEllipsis" />
+              <StackPanel>
+                <TextBlock
+                  Margin="8 8 8 -5"
+                  VerticalAlignment="Top"
+                  HorizontalAlignment="Left"
+                  Foreground="{Binding ForegroundBrush, Mode=OneWay}"
+                  Text="{Binding Name, Mode=OneWay}"
+                  FontFamily="'Century Gothic', 'Yu Gothic'"
+                  FontSize="15"
+                  Visibility="{Binding IsExistsName, Mode=OneWay, Converter={StaticResource VisibilityConverter}}" />
+
+                <TextBlock
+                  VerticalAlignment="Top"
+                  HorizontalAlignment="Left"
+                  Margin="8 8 8 8"
+                  Height="60"
+                  Foreground="{Binding ForegroundBrush, Mode=OneWay}"
+                  Text="{Binding Text, Mode=OneWay}"
+                  FontFamily="'Century Gothic', 'Yu Gothic'"
+                  FontSize="14"
+                  TextWrapping="Wrap"
+                  TextTrimming="WordEllipsis" />
+              </StackPanel>
 
               <DockPanel VerticalAlignment="Bottom" Margin="8">
                 <metro:ToggleSwitch
@@ -125,6 +137,19 @@
                   IsChecked="{Binding IsLock, Mode=TwoWay}"
                   ToolTip="Lock"
                   Visibility="{Binding IsWidget, Mode=OneWay, Converter={StaticResource VisibilityConverter}}" />
+
+                <Button
+                  DockPanel.Dock="Left"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Bottom"
+                  Margin="3 0 0 0"
+                  Style="{DynamicResource IconButtonStyle}"
+                  Background="Transparent"
+                  Command="{Binding RefreshCommand, Mode=OneWay}"
+                  ToolTip="Reload"
+                  Visibility="{Binding IsWidget, Mode=OneWay, Converter={StaticResource VisibilityConverter}}">
+                  <iconPacks:PackIconMaterial Kind="Reload"  Foreground="{DynamicResource AccentColorBrush}" Height="18" Width="18" />
+                </Button>
 
                 <Button
                   DockPanel.Dock="Right"
