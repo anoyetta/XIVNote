@@ -99,16 +99,31 @@
         CornerRadius="3"
         BorderThickness="0"
         Padding="12">
-        <StackPanel Orientation="Horizontal">
-          <TextBlock Text="URL" Margin="0 0 10 0" VerticalAlignment="Center" />
-          <TextBox
-            x:Name="UrlTextBox"
-            Width="400"
-            Height="32"
-            VerticalContentAlignment="Center"
-            FontSize="17"
-            FontFamily="Consolas"
-            Text="{Binding Model.Text, Mode=TwoWay}" />
+        <StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="URL" Margin="0 0 10 0" VerticalAlignment="Center" Width="50" />
+            <TextBox
+              x:Name="UrlTextBox"
+              Width="400"
+              Height="32"
+              VerticalContentAlignment="Center"
+              FontSize="17"
+              FontFamily="Consolas"
+              Text="{Binding Model.Text, Mode=TwoWay}" />
+          </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+            <TextBlock Text="Name" Margin="0 0 10 0" VerticalAlignment="Center" Width="50" />
+            <TextBox
+              x:Name="NameTextBox"
+              Width="200"
+              Height="32"
+              VerticalContentAlignment="Center"
+              FontSize="17"
+              FontFamily="Consolas"
+              Text="{Binding Model.Name, Mode=TwoWay}"
+              ToolTip="Optional" />
+          </StackPanel>
         </StackPanel>
       </Border>
     </Border>
@@ -144,6 +159,15 @@
           Click="NavigateButton_Click"
           ToolTip="Navigate URL">
           <iconPacks:PackIconMaterial Kind="Web" />
+        </Button>
+
+        <Button
+          DockPanel.Dock="Left" HorizontalAlignment="Left"
+          Height="30" Width="30"
+          Style="{DynamicResource AlterIconButtonStyle}"
+          Click="ReloadButton_Click"
+          ToolTip="Reload">
+          <iconPacks:PackIconMaterial Kind="Reload" />
         </Button>
 
         <Button

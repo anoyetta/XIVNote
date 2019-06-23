@@ -45,7 +45,14 @@
 
   <Grid Margin="10">
     <StackPanel>
-      <metro:MetroHeader Header="Background" metro:ControlsHelper.HeaderFontSize="16">
+      <metro:MetroHeader Header="Name (Optional)" metro:ControlsHelper.HeaderFontSize="16">
+        <TextBox
+          Text="{Binding Model.Name, Mode=TwoWay}"
+          VerticalContentAlignment="Center"
+          Height="30" />
+      </metro:MetroHeader>
+
+      <metro:MetroHeader Header="Background" metro:ControlsHelper.HeaderFontSize="16" Margin="0 10 0 0">
         <StackPanel Orientation="Horizontal">
           <Button
             Focusable="False"
