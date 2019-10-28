@@ -184,32 +184,7 @@ namespace XIVNote
                     Note.DefaultWidgetNoteSize;
                 window.Height = Note.DefaultNoteSize;
 
-                if (parentNote == null)
-                {
-                    window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                }
-                else
-                {
-                    window.WindowStartupLocation = WindowStartupLocation.Manual;
-
-                    var left = parentNote.X + parentNote.W + 3;
-                    var top = parentNote.Y;
-
-                    // マルチモニタを含めたデスクトップ領域を取得する
-                    var w = SystemParameters.VirtualScreenWidth;
-                    var h = SystemParameters.VirtualScreenHeight;
-
-                    // デスクトップ領域からはみ出ている？
-                    if ((left + window.Width) > w ||
-                        (top + window.Height) >= h)
-                    {
-                        left = parentNote.X + 10;
-                        top = parentNote.Y + 10;
-                    }
-
-                    window.Left = left;
-                    window.Top = top;
-                }
+                window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
                 window.Show();
 
