@@ -46,6 +46,8 @@ namespace XIVNote
             typeof(SuspendableObservableCollection<Note>),
             new XmlRootAttribute("notes"));
 
+        private volatile bool isLoading;
+
         public void Load() => this.Load(FileName);
 
         public void Load(
@@ -53,6 +55,8 @@ namespace XIVNote
         {
             lock (this)
             {
+                this.isLoading = true;
+
                 try
                 {
                     if (!File.Exists(fileName))
@@ -81,6 +85,10 @@ namespace XIVNote
                     {
                         this.NoteList.Add(Note.DefaultNoteStyle);
                     }
+
+                    this.NoteList.CollectionChanged += (_, __) => this.EnqueueSave();
+
+                    this.isLoading = false;
                 }
             }
         }
@@ -113,6 +121,33 @@ namespace XIVNote
                     fileName,
                     sb.ToString() + Environment.NewLine,
                     new UTF8Encoding(false));
+            }
+        }
+
+        private volatile bool isSaving;
+
+        public async void EnqueueSave()
+        {
+            if (this.isLoading)
+            {
+                return;
+            }
+
+            if (this.isSaving)
+            {
+                return;
+            }
+
+            this.isSaving = true;
+
+            try
+            {
+                await Task.Delay(TimeSpan.FromSeconds(5));
+                await Task.Run(() => this.Save(FileName));
+            }
+            finally
+            {
+                this.isSaving = false;
             }
         }
 
@@ -184,39 +219,14 @@ namespace XIVNote
                     Note.DefaultWidgetNoteSize;
                 window.Height = Note.DefaultNoteSize;
 
-                if (parentNote == null)
-                {
-                    window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                }
-                else
-                {
-                    window.WindowStartupLocation = WindowStartupLocation.Manual;
-
-                    var left = parentNote.X + parentNote.W + 3;
-                    var top = parentNote.Y;
-
-                    // マルチモニタを含めたデスクトップ領域を取得する
-                    var w = SystemParameters.VirtualScreenWidth;
-                    var h = SystemParameters.VirtualScreenHeight;
-
-                    // デスクトップ領域からはみ出ている？
-                    if ((left + window.Width) > w ||
-                        (top + window.Height) >= h)
-                    {
-                        left = parentNote.X + 10;
-                        top = parentNote.Y + 10;
-                    }
-
-                    window.Left = left;
-                    window.Top = top;
-                }
+                window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
                 window.Show();
 
                 this.NoteViews.Add(view);
             });
 
-            await Task.Run(this.Save);
+            Notes.Instance.EnqueueSave();
         }
 
         public async Task RemoveNoteAsync(
@@ -235,7 +245,7 @@ namespace XIVNote
 
             this.NoteList.Remove(note);
 
-            await Task.Run(this.Save);
+            Notes.Instance.EnqueueSave();
         }
 
         public void StartForegroundAppSubscriber()

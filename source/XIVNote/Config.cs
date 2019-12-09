@@ -41,6 +41,31 @@ namespace XIVNote
 
         public void Save() => this.Save(FileName);
 
+        private volatile bool isSaving;
+
+        public void StartAutoSave()
+        {
+            this.PropertyChanged += async (_, __) =>
+            {
+                if (this.isSaving)
+                {
+                    return;
+                }
+
+                this.isSaving = true;
+
+                try
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(10));
+                    await Task.Run(() => this.Save(FileName));
+                }
+                finally
+                {
+                    this.isSaving = false;
+                }
+            };
+        }
+
         #region Migration
 
         /// <summary>

@@ -15,6 +15,11 @@ namespace XIVNote
     [Serializable]
     public partial class Note : BindableBase
     {
+        public Note()
+        {
+            this.PropertyChanged += (_, __) => Notes.Instance.EnqueueSave();
+        }
+
         [XmlIgnore]
         public Guid ID { get; private set; } = Guid.NewGuid();
 
@@ -337,7 +342,7 @@ namespace XIVNote
                 });
             }
 
-            await Task.Run(() => Notes.Instance.Save());
+            Notes.Instance.EnqueueSave();
         }
 
         #endregion AddImage
@@ -349,7 +354,7 @@ namespace XIVNote
         public DelegateCommand<NoteImage> RemoveImageCommand =>
             this.removeImageCommand ?? (this.removeImageCommand = new DelegateCommand<NoteImage>(this.ExecuteRemoveImageCommand));
 
-        private async void ExecuteRemoveImageCommand(
+        private void ExecuteRemoveImageCommand(
             NoteImage image)
         {
             if (image == null)
@@ -359,7 +364,7 @@ namespace XIVNote
 
             this.Images.Remove(image);
 
-            await Task.Run(() => Notes.Instance.Save());
+            Notes.Instance.EnqueueSave();
         }
 
         #endregion RemoveImage
@@ -402,6 +407,11 @@ namespace XIVNote
     [Serializable]
     public class NoteImage : BindableBase
     {
+        public NoteImage()
+        {
+            this.PropertyChanged += (_, __) => Notes.Instance.EnqueueSave();
+        }
+
         [XmlIgnore]
         public Note Parent { get; set; }
 

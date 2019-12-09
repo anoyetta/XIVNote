@@ -12,7 +12,7 @@ namespace XIVNote.Views
         {
             this.InitializeComponent();
 
-            this.Closed += async (_, __) =>
+            this.Closing += async (_, __) =>
             {
                 await Task.Run(() =>
                 {
