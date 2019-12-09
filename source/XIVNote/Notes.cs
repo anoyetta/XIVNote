@@ -78,9 +78,7 @@ namespace XIVNote
                             this.NoteList.AddRange(data, true);
                         }
                     }
-                }
-                finally
-                {
+
                     if (!this.NoteList.Any(x => x.IsDefault))
                     {
                         this.NoteList.Add(Note.DefaultNoteStyle);
@@ -88,6 +86,13 @@ namespace XIVNote
 
                     this.NoteList.CollectionChanged += (_, __) => this.EnqueueSave();
 
+                    foreach (var note in this.NoteList)
+                    {
+                        note.SetAutoSave();
+                    }
+                }
+                finally
+                {
                     this.isLoading = false;
                 }
             }
@@ -338,13 +343,13 @@ namespace XIVNote
         {
             try
             {
-                // ƒtƒHƒAƒOƒ‰ƒEƒ“ƒhWindow‚Ìƒnƒ“ƒhƒ‹‚ğæ“¾‚·‚é
+                // ãƒ•ã‚©ã‚¢ã‚°ãƒ©ã‚¦ãƒ³ãƒ‰Windowã®ãƒãƒ³ãƒ‰ãƒ«ã‚’å–å¾—ã™ã‚‹
                 var hWnd = NativeMethods.GetForegroundWindow();
 
-                // ƒvƒƒZƒXID‚É•ÏŠ·‚·‚é
+                // ãƒ—ãƒ­ã‚»ã‚¹IDã«å¤‰æ›ã™ã‚‹
                 NativeMethods.GetWindowThreadProcessId(hWnd, out uint pid);
 
-                // ƒtƒHƒAƒEƒBƒ“ƒhƒE‚Ìƒtƒ@ƒCƒ‹–¼‚ğæ“¾‚·‚é
+                // ãƒ•ã‚©ã‚¢ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾—ã™ã‚‹
                 var p = Process.GetProcessById((int)pid);
                 if (p != null)
                 {

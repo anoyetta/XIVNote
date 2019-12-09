@@ -15,9 +15,14 @@ namespace XIVNote
     [Serializable]
     public partial class Note : BindableBase
     {
-        public Note()
+        public void SetAutoSave()
         {
             this.PropertyChanged += (_, __) => Notes.Instance.EnqueueSave();
+
+            foreach (var image in this.ImageList)
+            {
+                image.SetAutoSave();
+            }
         }
 
         [XmlIgnore]
@@ -325,7 +330,7 @@ namespace XIVNote
                 var storeFileName = $"{Guid.NewGuid()}.png";
                 var storeFilePath = Path.Combine(@".\images", storeFileName);
 
-                // PNGŒ`Ž®‚É•ÏŠ·‚µ‚Ä•Û‘¶‚·‚é
+                // PNGå½¢å¼ã«å¤‰æ›ã—ã¦ä¿å­˜ã™ã‚‹
                 await Task.Run(() =>
                 {
                     using (var ms = new WrappingStream(new MemoryStream(File.ReadAllBytes(fileName))))
@@ -407,7 +412,7 @@ namespace XIVNote
     [Serializable]
     public class NoteImage : BindableBase
     {
-        public NoteImage()
+        public void SetAutoSave()
         {
             this.PropertyChanged += (_, __) => Notes.Instance.EnqueueSave();
         }

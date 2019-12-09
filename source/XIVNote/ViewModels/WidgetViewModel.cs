@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using aframe;
@@ -75,7 +75,7 @@ namespace XIVNote.ViewModels
         {
             var timer = new DispatcherTimer(DispatcherPriority.ContextIdle)
             {
-                Interval = TimeSpan.FromSeconds(5),
+                Interval = TimeSpan.FromSeconds(7),
             };
 
             timer.Tick += async (_, __) =>
@@ -83,7 +83,7 @@ namespace XIVNote.ViewModels
                 if (IsSaveQueue)
                 {
                     IsSaveQueue = false;
-                    await Task.Run(Notes.Instance.Save);
+                    Notes.Instance.EnqueueSave();
                 }
             };
 
