@@ -78,7 +78,7 @@ namespace XIVNote.ViewModels
                 Interval = TimeSpan.FromSeconds(7),
             };
 
-            timer.Tick += async (_, __) =>
+            timer.Tick += (_, __) =>
             {
                 if (IsSaveQueue)
                 {
