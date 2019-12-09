@@ -38,6 +38,8 @@ namespace XIVNote
 
             await Task.Delay(10);
             notes.StartForegroundAppSubscriber();
+
+            c.StartAutoSave();
         }
 
         private void App_Exit(object sender, ExitEventArgs e)

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Windows.Threading;
 using aframe;
 using Prism.Commands;
@@ -69,10 +68,10 @@ namespace XIVNote.ViewModels
         public DelegateCommand MinimizeCommand =>
             this.minimizeCommand ?? (this.minimizeCommand = new DelegateCommand(this.ExecuteMinimizeCommand));
 
-        private async void ExecuteMinimizeCommand()
+        private void ExecuteMinimizeCommand()
         {
             this.Model.IsVisible = false;
-            await Task.Run(Notes.Instance.Save);
+            Notes.Instance.EnqueueSave();
         }
 
         #endregion Minimize
@@ -100,15 +99,15 @@ namespace XIVNote.ViewModels
         {
             var timer = new DispatcherTimer(DispatcherPriority.ContextIdle)
             {
-                Interval = TimeSpan.FromSeconds(5),
+                Interval = TimeSpan.FromSeconds(6),
             };
 
-            timer.Tick += async (_, __) =>
+            timer.Tick += (_, __) =>
             {
                 if (IsSaveQueue)
                 {
                     IsSaveQueue = false;
-                    await Task.Run(Notes.Instance.Save);
+                    Notes.Instance.EnqueueSave();
                 }
             };
 

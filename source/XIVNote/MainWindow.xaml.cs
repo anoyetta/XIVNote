@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using System.Windows;
 using MahApps.Metro.Controls;
 using XIVNote.ViewModels;
@@ -14,15 +13,6 @@ namespace XIVNote
         public MainWindow()
         {
             this.InitializeComponent();
-
-            this.Closed += async (_, __) =>
-            {
-                await Task.Run(() =>
-                {
-                    Notes.Instance.Save();
-                    Config.Instance.Save();
-                });
-            };
 
             this.StateChanged += this.MainWindow_StateChanged;
 
