@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using PropertyChanged;
 
 namespace aframe
 {
@@ -21,6 +22,7 @@ namespace aframe
 
         private bool _suppressNotification = false;
 
+        [SuppressPropertyChangedWarnings]
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             if (!this._suppressNotification)
