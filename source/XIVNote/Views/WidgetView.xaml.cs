@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -82,24 +82,36 @@ namespace XIVNote.Views
 
             this.LeftThumb.DragDelta += (_, e) =>
             {
-                this.Left += e.HorizontalChange;
-                this.Width -= e.HorizontalChange;
+                if (!this.Note.IsLock)
+                {
+                    this.Left += e.HorizontalChange;
+                    this.Width -= e.HorizontalChange;
+                }
             };
 
             this.RightThumb.DragDelta += (_, e) =>
             {
-                this.Width += e.HorizontalChange;
+                if (!this.Note.IsLock)
+                {
+                    this.Width += e.HorizontalChange;
+                }
             };
 
             this.TopThumb.DragDelta += (_, e) =>
             {
-                this.Top += e.VerticalChange;
-                this.Height -= e.VerticalChange;
+                if (!this.Note.IsLock)
+                {
+                    this.Top += e.VerticalChange;
+                    this.Height -= e.VerticalChange;
+                }
             };
 
             this.BottomThumb.DragDelta += (_, e) =>
             {
-                this.Height += e.VerticalChange;
+                if (!this.Note.IsLock)
+                {
+                    this.Height += e.VerticalChange;
+                }
             };
 
             this.UrlPanel.MouseLeftButtonUp += (_, __)
