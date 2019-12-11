@@ -91,6 +91,15 @@ namespace XIVNote
             set => this.SetProperty(ref this.isLock, value);
         }
 
+        private double scale = 1.0;
+
+        [XmlAttribute]
+        public double Scale
+        {
+            get => this.scale;
+            set => this.SetProperty(ref this.scale, value);
+        }
+
         [XmlIgnore]
         public static readonly Color WidgetForegroundColor = (Color)ColorConverter.ConvertFromString("#2b2b2b");
 

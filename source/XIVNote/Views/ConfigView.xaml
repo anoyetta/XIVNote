@@ -67,7 +67,7 @@
             Grid.Column="0"
             Value="{Binding Config.Scale, Mode=TwoWay}"
             Minimum="0.00"
-            Maximum="4.00"
+            Maximum="3.00"
             LargeChange="0.01"
             SmallChange="0.01"
             TickFrequency="0.5"

@@ -39,8 +39,8 @@
   <Grid>
     <Grid.LayoutTransform>
       <ScaleTransform
-        ScaleX="{Binding Config.Scale, Mode=OneWay}"
-        ScaleY="{Binding Config.Scale, Mode=OneWay}" />
+        ScaleX="{Binding Model.Scale, Mode=OneWay}"
+        ScaleY="{Binding Model.Scale, Mode=OneWay}" />
     </Grid.LayoutTransform>
 
     <Thumb Name="LeftThumb" Panel.ZIndex="100" HorizontalAlignment="Left" Width="2" BorderThickness="1.5" BorderBrush="Transparent" Cursor="SizeWE" Opacity="0.5" />

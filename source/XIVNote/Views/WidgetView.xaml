@@ -132,7 +132,13 @@
     <Grid
       Grid.Row="0"
       x:Name="WebGrid"
-      Visibility="{Binding Model.IsBlank, Mode=OneWay, Converter={StaticResource NotVisibilityConverter}}" />
+      Visibility="{Binding Model.IsBlank, Mode=OneWay, Converter={StaticResource NotVisibilityConverter}}">
+      <Grid.LayoutTransform>
+        <ScaleTransform
+          ScaleX="{Binding Model.Scale, Mode=OneWay}"
+          ScaleY="{Binding Model.Scale, Mode=OneWay}" />
+      </Grid.LayoutTransform>
+    </Grid>
 
     <!-- Tool Bar -->
     <Grid
@@ -200,16 +206,20 @@
           Minimum="0"
           FontSize="16"
           Value="{Binding Model.Opacity, Mode=TwoWay}"
-          ToolTip="Background Opacity" />
+          ToolTip="Opacity" />
 
-        <metro:ToggleSwitch
+        <metro:NumericUpDown
           DockPanel.Dock="Left" HorizontalAlignment="Left"
           Margin="10 1 0 1"
-          VerticalAlignment="Center"
-          Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
-          IsChecked="{Binding Model.IsLock, Mode=TwoWay}"
-          Content=""
-          ToolTip="Lock" />
+          BorderThickness="0"
+          StringFormat="N2"
+          Interval="0.01"
+          Width="90"
+          Maximum="3.00"
+          Minimum="0.10"
+          FontSize="16"
+          Value="{Binding Model.Scale, Mode=TwoWay}"
+          ToolTip="Scale" />
 
         <Button
           DockPanel.Dock="Right" HorizontalAlignment="Right"
@@ -228,6 +238,15 @@
           ToolTip="Hide">
           <iconPacks:PackIconMaterial Kind="ArrowCollapseDown" />
         </Button>
+
+        <metro:ToggleSwitch
+          DockPanel.Dock="Right" HorizontalAlignment="Right"
+          Margin="0 1 5 1"
+          VerticalAlignment="Center"
+          Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}"
+          IsChecked="{Binding Model.IsLock, Mode=TwoWay}"
+          Content=""
+          ToolTip="Lock" />
       </DockPanel>
     </Grid>
   </Grid>

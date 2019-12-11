@@ -11,6 +11,7 @@ using aframe;
 using aframe.Views;
 using CefSharp;
 using CefSharp.Wpf;
+using Prism.Mvvm;
 using XIVNote.ViewModels;
 
 namespace XIVNote.Views
@@ -226,6 +227,13 @@ namespace XIVNote.Views
                     this.ApplyLock();
                     break;
 
+                /*
+                ZoomLevelの扱いは難しいので封印する
+                case nameof(Note.Scale):
+                    this.CefBrowser.ZoomLevel = model.Scale;
+                    break;
+                */
+
                 default:
                     break;
             }
@@ -306,9 +314,6 @@ namespace XIVNote.Views
         public bool CanSetCookie(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, Cookie cookie)
             => true;
 
-        public bool GetAuthCredentials(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, bool isProxy, string host, int port, string realm, string scheme, IAuthCallback callback)
-            => true;
-
         public IResponseFilter GetResourceResponseFilter(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IResponse response)
             => null;
 
@@ -352,5 +357,30 @@ namespace XIVNote.Views
 
         public bool OnSelectClientCertificate(IWebBrowser chromiumWebBrowser, IBrowser browser, bool isProxy, string host, int port, X509Certificate2Collection certificates, ISelectClientCertificateCallback callback)
             => false;
+
+        public IResourceRequestHandler GetResourceRequestHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool isNavigation, bool isDownload, string requestInitiator, ref bool disableDefaultHandling)
+            => null;
+
+        public bool GetAuthCredentials(IWebBrowser chromiumWebBrowser, IBrowser browser, string originUrl, bool isProxy, string host, int port, string realm, string scheme, IAuthCallback callback)
+            => true;
+    }
+
+    public class ZoomItem : BindableBase
+    {
+        private string text;
+
+        public string Text
+        {
+            get => this.text;
+            set => this.SetProperty(ref this.text, value);
+        }
+
+        private double zoomLevel;
+
+        public double ZoomLevel
+        {
+            get => this.zoomLevel;
+            set => this.SetProperty(ref this.zoomLevel, value);
+        }
     }
 }
