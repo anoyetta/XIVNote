@@ -21,7 +21,7 @@ namespace XIVNote
                 this.ShowInTaskbar = false;
                 this.WindowState = WindowState.Minimized;
 
-                this.Loaded += (_, __) =>
+                this.Loaded += (_, _) =>
                 {
                     this.ToHide();
                     this.ShowInTaskbar = true;
@@ -29,7 +29,7 @@ namespace XIVNote
             }
             else
             {
-                this.Loaded += (_, __) => this.Activate();
+                this.Loaded += (_, _) => this.Activate();
             }
 
             this.ViewModel.ShowCallback = () => this.ToShow();

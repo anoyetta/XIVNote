@@ -84,7 +84,7 @@ namespace XIVNote
                         this.NoteList.Add(Note.DefaultNoteStyle);
                     }
 
-                    this.NoteList.CollectionChanged += (_, __) => this.EnqueueSave();
+                    this.NoteList.CollectionChanged += (_, _) => this.EnqueueSave();
 
                     foreach (var note in this.NoteList)
                     {
@@ -158,42 +158,44 @@ namespace XIVNote
 
         private readonly List<INoteOverlay> NoteViews = new List<INoteOverlay>(64);
 
-        public async Task ShowNotesAsync() => await WPFHelper.Dispatcher.InvokeAsync(async () =>
-              {
-                  this.NoteViews.Clear();
+        public async Task ShowNotesAsync()
+            => await WPFHelper.Dispatcher.InvokeAsync(async () =>
+            {
+                this.NoteViews.Clear();
 
-                  foreach (var model in this.NoteList)
-                  {
-                      if (model.IsDefault)
-                      {
-                          continue;
-                      }
+                foreach (var model in this.NoteList)
+                {
+                    if (model.IsDefault)
+                    {
+                        continue;
+                    }
 
-                      if (model.IsWidget)
-                      {
-                          model.ForegroundColor = Note.WidgetForegroundColor;
-                      }
+                    if (model.IsWidget)
+                    {
+                        model.ForegroundColor = Note.WidgetForegroundColor;
+                    }
 
-                      var view = !model.IsWidget ?
-                          new NoteView() as INoteOverlay :
-                          new WidgetView() as INoteOverlay;
-                      view.Note = model;
+                    var view = !model.IsWidget ?
+                        new NoteView() as INoteOverlay :
+                        new WidgetView() as INoteOverlay;
+                    view.Note = model;
 
-                      view.ToWindow().Show();
+                    view.ToWindow().Show();
 
-                      this.NoteViews.Add(view);
-                      await Task.Delay(10);
-                  }
-              });
+                    this.NoteViews.Add(view);
+                    await Task.Delay(10);
+                }
+            });
 
-        public async Task CloseNotesAsync() => await WPFHelper.Dispatcher.InvokeAsync(() =>
-              {
-                  foreach (var view in this.NoteViews)
-                  {
-                      view.ToWindow().Close();
-                      this.NoteViews.Remove(view);
-                  }
-              });
+        public async Task CloseNotesAsync()
+            => await WPFHelper.Dispatcher.InvokeAsync(() =>
+            {
+                foreach (var view in this.NoteViews)
+                {
+                    view.ToWindow().Close();
+                    this.NoteViews.Remove(view);
+                }
+            });
 
         public async Task AddNoteAsync(
             Note parentNote = null,

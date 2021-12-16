@@ -5,8 +5,6 @@ VisualStudioVersion = 17.1.31911.260
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aframe.Core", "aframe\source\aframe.Core\aframe.Core.csproj", "{1E602601-AEA4-47CD-8F44-6C5E1D7387A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aframe.Updater", "aframe\source\aframe.Updater\aframe.Updater.csproj", "{38E4D044-78F5-453E-A52C-96F6B201C8B8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XIVNote", "XIVNote\XIVNote.csproj", "{7FE1DE40-7B3D-4B06-A29C-D199754F45C3}"
 EndProject
 Global
@@ -25,14 +23,6 @@ Global
 		{1E602601-AEA4-47CD-8F44-6C5E1D7387A5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1E602601-AEA4-47CD-8F44-6C5E1D7387A5}.Release|x64.ActiveCfg = Release|Any CPU
 		{1E602601-AEA4-47CD-8F44-6C5E1D7387A5}.Release|x64.Build.0 = Release|Any CPU
-		{38E4D044-78F5-453E-A52C-96F6B201C8B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{38E4D044-78F5-453E-A52C-96F6B201C8B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{38E4D044-78F5-453E-A52C-96F6B201C8B8}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{38E4D044-78F5-453E-A52C-96F6B201C8B8}.Debug|x64.Build.0 = Debug|Any CPU
-		{38E4D044-78F5-453E-A52C-96F6B201C8B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{38E4D044-78F5-453E-A52C-96F6B201C8B8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{38E4D044-78F5-453E-A52C-96F6B201C8B8}.Release|x64.ActiveCfg = Release|Any CPU
-		{38E4D044-78F5-453E-A52C-96F6B201C8B8}.Release|x64.Build.0 = Release|Any CPU
 		{7FE1DE40-7B3D-4B06-A29C-D199754F45C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7FE1DE40-7B3D-4B06-A29C-D199754F45C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FE1DE40-7B3D-4B06-A29C-D199754F45C3}.Debug|x64.ActiveCfg = Debug|x64
@@ -46,8 +36,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		        SolutionGuid = {D1BC3741-3A21-4CE3-8E3A-98EAAB6019E9}
-		                SolutionGuid = {B02AAB55-E009-4683-A86E-C8F7D1D54733}
 		SolutionGuid = {0685BE3F-0031-44B2-9C5A-6A47DF25D352}
+		                SolutionGuid = {B02AAB55-E009-4683-A86E-C8F7D1D54733}
+		        SolutionGuid = {D1BC3741-3A21-4CE3-8E3A-98EAAB6019E9}
 	EndGlobalSection
 EndGlobal
