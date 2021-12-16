@@ -146,20 +146,20 @@ namespace XIVNote.Views
         }
 
         private Lazy<ChromiumWebBrowser> LazyCefBrowser = new Lazy<ChromiumWebBrowser>(() =>
-        {
-            var browser = new ChromiumWebBrowser()
-            {
-                RequestHandler = new WidgetRequestHandler(),
-                BrowserSettings = new BrowserSettings()
-                {
-                    FileAccessFromFileUrls = CefState.Enabled,
-                    UniversalAccessFromFileUrls = CefState.Enabled,
-                    WindowlessFrameRate = 30,
-                },
-            };
+         {
+             var browser = new ChromiumWebBrowser()
+             {
+                 RequestHandler = new WidgetRequestHandler(),
+                 BrowserSettings = new BrowserSettings()
+                 {
+                     FileAccessFromFileUrls = CefState.Enabled,
+                     UniversalAccessFromFileUrls = CefState.Enabled,
+                     WindowlessFrameRate = 30,
+                 },
+             };
 
-            return browser;
-        });
+             return browser;
+         });
 
         public ChromiumWebBrowser CefBrowser => this.LazyCefBrowser.Value;
 
@@ -375,6 +375,10 @@ namespace XIVNote.Views
 
         public bool GetAuthCredentials(IWebBrowser chromiumWebBrowser, IBrowser browser, string originUrl, bool isProxy, string host, int port, string realm, string scheme, IAuthCallback callback)
             => true;
+
+        public void OnDocumentAvailableInMainFrame(IWebBrowser chromiumWebBrowser, IBrowser browser)
+        {
+        }
     }
 
     public class ZoomItem : BindableBase
