@@ -145,21 +145,20 @@ namespace XIVNote.Views
             set => this.ViewModel.Model = value;
         }
 
-        private Lazy<ChromiumWebBrowser> LazyCefBrowser = new Lazy<ChromiumWebBrowser>(() =>
-         {
-             var browser = new ChromiumWebBrowser()
-             {
-                 RequestHandler = new WidgetRequestHandler(),
-                 BrowserSettings = new BrowserSettings()
-                 {
-                     FileAccessFromFileUrls = CefState.Enabled,
-                     UniversalAccessFromFileUrls = CefState.Enabled,
-                     WindowlessFrameRate = 30,
-                 },
-             };
+        private Lazy<ChromiumWebBrowser> LazyCefBrowser
+            = new Lazy<ChromiumWebBrowser>(() =>
+            {
+                var browser = new ChromiumWebBrowser()
+                {
+                    RequestHandler = new WidgetRequestHandler(),
+                    BrowserSettings = new BrowserSettings()
+                    {
+                        WindowlessFrameRate = 30,
+                    },
+                };
 
-             return browser;
-         });
+                return browser;
+            });
 
         public ChromiumWebBrowser CefBrowser => this.LazyCefBrowser.Value;
 

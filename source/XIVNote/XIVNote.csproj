@@ -179,7 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CefSharp.Wpf">
-      <Version>86.0.241</Version>
+      <Version>96.0.180</Version>
     </PackageReference>
     <PackageReference Include="Costura.Fody">
       <Version>5.7.0</Version>
