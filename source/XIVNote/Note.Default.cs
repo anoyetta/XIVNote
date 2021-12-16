@@ -29,7 +29,7 @@ namespace XIVNote
             W = DefaultNoteSize,
             H = DefaultNoteSize,
             ForegroundColorString = "#000000",
-            BackgroundColorString = "#fcc800",
+            BackgroundColorString = "#fce2c4",
             Opacity = 0.9,
             Font = FontInfo.DefaultFont,
         };

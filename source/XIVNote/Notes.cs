@@ -36,7 +36,7 @@ namespace XIVNote
         public SuspendableObservableCollection<Note> NoteList { get; } = new SuspendableObservableCollection<Note>();
 
         [XmlIgnore]
-        public Note DefaultNote => this.NoteList.FirstOrDefault(x => x.IsDefault);
+        public Note DefaultNote => this.NoteList.FirstOrDefault(x => x.IsDefault) ?? Note.DefaultNoteStyle.Clone() as Note;
 
         public static string FileName => Path.Combine(
             Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
@@ -159,41 +159,41 @@ namespace XIVNote
         private readonly List<INoteOverlay> NoteViews = new List<INoteOverlay>(64);
 
         public async Task ShowNotesAsync() => await WPFHelper.Dispatcher.InvokeAsync(async () =>
-        {
-            this.NoteViews.Clear();
+              {
+                  this.NoteViews.Clear();
 
-            foreach (var model in this.NoteList)
-            {
-                if (model.IsDefault)
-                {
-                    continue;
-                }
+                  foreach (var model in this.NoteList)
+                  {
+                      if (model.IsDefault)
+                      {
+                          continue;
+                      }
 
-                if (model.IsWidget)
-                {
-                    model.ForegroundColor = Note.WidgetForegroundColor;
-                }
+                      if (model.IsWidget)
+                      {
+                          model.ForegroundColor = Note.WidgetForegroundColor;
+                      }
 
-                var view = !model.IsWidget ?
-                    new NoteView() as INoteOverlay :
-                    new WidgetView() as INoteOverlay;
-                view.Note = model;
+                      var view = !model.IsWidget ?
+                          new NoteView() as INoteOverlay :
+                          new WidgetView() as INoteOverlay;
+                      view.Note = model;
 
-                view.ToWindow().Show();
+                      view.ToWindow().Show();
 
-                this.NoteViews.Add(view);
-                await Task.Delay(10);
-            }
-        });
+                      this.NoteViews.Add(view);
+                      await Task.Delay(10);
+                  }
+              });
 
         public async Task CloseNotesAsync() => await WPFHelper.Dispatcher.InvokeAsync(() =>
-        {
-            foreach (var view in this.NoteViews)
-            {
-                view.ToWindow().Close();
-                this.NoteViews.Remove(view);
-            }
-        });
+              {
+                  foreach (var view in this.NoteViews)
+                  {
+                      view.ToWindow().Close();
+                      this.NoteViews.Remove(view);
+                  }
+              });
 
         public async Task AddNoteAsync(
             Note parentNote = null,
